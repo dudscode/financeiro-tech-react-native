@@ -22,14 +22,14 @@ export const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 24,
-    fontWeight: "600",
     color: "#fff",
+    fontFamily: "Inter_600SemiBold",
   },
   date: {
     fontSize: 12,
-    fontWeight: "400",
     color: "#fff",
     marginTop: 16,
+    fontFamily: "Inter_400Regular",
   },
   balanceContainer: {
     alignItems: "center",
@@ -46,8 +46,8 @@ export const styles = StyleSheet.create({
   },
   balanceTitle: {
     fontSize: 20,
-    fontWeight: "600",
     color: "#fff",
+    fontFamily: "Inter_600SemiBold",
   },
   icon: {
     marginLeft: 8,
@@ -65,9 +65,9 @@ export const styles = StyleSheet.create({
   },
   balanceAmount: {
     fontSize: 32,
-    fontWeight: "400",
     color: "#fff",
     marginBottom: 16,
+    fontFamily: "Inter_400Regular",
   },
   imageTopEdge: {
     position: "absolute",
