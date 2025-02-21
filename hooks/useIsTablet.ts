@@ -7,7 +7,7 @@ export const useIsTablet = () => {
   useEffect(() => {
     const handleResize = () => {
       const screenWidth = Dimensions.get("window").width;
-      setIsTablet(screenWidth > 768 && screenWidth <= 1024); // Defina os valores conforme necessário
+      setIsTablet(screenWidth > 768 && screenWidth <= 1024);
     };
 
     handleResize();
