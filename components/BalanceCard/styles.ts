@@ -3,41 +3,46 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 400,
+    minHeight: 500,
     backgroundColor: "#004D61",
     borderRadius: 8,
     padding: 24,
     color: "#fff",
     position: "relative",
-    justifyContent: "center",
+    height: "100%",
   },
   tabletContainer: {
     padding: 32,
-    height: 420,
+    minHeight: 520,
   },
   header: {
-    marginBottom: 20,
+    marginBottom: 16,
     alignItems: "center",
+    marginTop: 40,
   },
   greeting: {
-    fontSize: 25,
+    fontSize: 24,
     fontWeight: "600",
     color: "#fff",
   },
   date: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "400",
     color: "#fff",
+    marginTop: 16,
   },
   balanceContainer: {
     alignItems: "center",
+    marginTop: 16,
+    marginBottom: 40,
   },
   balance: {
-    alignItems: "center",
+    alignItems: "flex-start",
   },
   balanceHeader: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 6,
   },
   balanceTitle: {
     fontSize: 20,
@@ -56,34 +61,29 @@ export const styles = StyleSheet.create({
   accountType: {
     fontSize: 16,
     color: "#fff",
+    marginBottom: 16,
   },
   balanceAmount: {
-    fontSize: 31,
+    fontSize: 32,
     fontWeight: "400",
     color: "#fff",
-  },
-  imageBottomEdge: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    width: 150,
-    height: 150,
-    opacity: 0.3,
+    marginBottom: 16,
   },
   imageTopEdge: {
     position: "absolute",
     top: 0,
-    right: 0,
-    width: 150,
-    height: 150,
+    left: 0,
     opacity: 0.3,
-    transform: [{ rotate: "180deg" }],
   },
-  imagePerson: {
+  imageBottomEdge: {
     position: "absolute",
     bottom: 0,
     right: 0,
-    width: 200,
-    height: 200,
+    opacity: 0.3,
+  },
+  imagePerson: {
+    position: "absolute",
+    bottom: 45,
+    right: 30,
   },
 });

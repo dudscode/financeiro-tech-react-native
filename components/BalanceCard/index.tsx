@@ -7,7 +7,6 @@ import {
   Image,
 } from "react-native";
 import { useCurrencyFormatter } from "../../hooks/useCurrencyFormatter";
-import { useIsMobile } from "../../hooks/useIsMobile";
 import { useIsTablet } from "../../hooks/useIsTablet";
 import { styles } from "./styles";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -26,7 +25,6 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [currentDate, setCurrentDate] = useState("");
   const { formatarValor } = useCurrencyFormatter();
-  const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
   useEffect(() => {
@@ -45,7 +43,7 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
   return (
     <View style={[styles.container, isTablet && styles.tabletContainer]}>
       <View style={styles.header}>
-        <Text style={styles.greeting}>Olá, Usuário! :)</Text>
+        <Text style={styles.greeting}>Olá, Joana! :)</Text>
         <Text style={styles.date}>{currentDate}</Text>
       </View>
 
@@ -77,22 +75,20 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
         )}
       </View>
 
-      {!isMobile && (
-        <>
-          <Image
-            source={require("../../assets/images/bottom-edge.png")}
-            style={styles.imageBottomEdge}
-          />
-          <Image
-            source={require("../../assets/images/top-edge.png")}
-            style={styles.imageTopEdge}
-          />
-          <Image
-            source={require("../../assets/images/person-with-coin.png")}
-            style={styles.imagePerson}
-          />
-        </>
-      )}
+      <>
+        <Image
+          source={require("../../assets/images/top-mobile.png")}
+          style={styles.imageTopEdge}
+        />
+        <Image
+          source={require("../../assets/images/bottom-mobile.png")}
+          style={styles.imageBottomEdge}
+        />
+        <Image
+          source={require("../../assets/images/person-with-coin.png")}
+          style={styles.imagePerson}
+        />
+      </>
     </View>
   );
 };
