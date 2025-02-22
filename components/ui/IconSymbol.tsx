@@ -17,7 +17,8 @@ const MAPPING = {
   'clear.fill': 'clear',
   'trash': 'delete',
   'pencil': 'edit',
-  'money': 'attach-money',
+  'money': 'money',
+  'dollarsign.circle': 'money',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],
