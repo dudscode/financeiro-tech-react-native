@@ -29,7 +29,7 @@ export default function TabExtratoScreen() {
             'Você tem certeza que deseja excluir a Transação ' + id + ' ?',
             [
                 { text: 'Cancelar', style: 'cancel' },
-                { text: 'Excluir', onPress: () => {setData(prevData => prevData.filter(item => item.id !== id))} },
+                { text: 'Excluir', onPress: () => { setData(prevData => prevData.filter(item => item.id !== id)) } },
             ],
         );
     };
@@ -59,25 +59,30 @@ export default function TabExtratoScreen() {
                 <ThemedText type="title">Extrato</ThemedText>
             </ThemedView>
             <View>
-                {!data.length? (
+                {!data.length ? (
                     <ThemedText type="primary" style={styles.emptyListMessage}>
                         Sem transações
                     </ThemedText>
                 ) : (
                     <>
-                    <TextInput
-                      style={[styles.searchInput, {color: textColor}]}
-                      placeholder="Buscar transação..."
-                      value={searchQuery}
-                      onChangeText={setSearchQuery}
-                    />
-                    <FlatList
-                      data={filteredData}
-                      renderItem={({ item }) => <SwipeableItem {...item} onDelete={handleDelete} onEdit={handleEdit} />}
-                      keyExtractor={item => item.id}
-                    />
-                  </>
-                    )}
+                        <TextInput
+                            style={[styles.searchInput, { color: textColor }]}
+                            placeholder="Buscar transação..."
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                        />
+                        <FlatList
+                            data={filteredData}
+                            renderItem={({ item }) => (
+                                <SwipeableItem {...item} onDelete={handleDelete} onEdit={handleEdit} />
+                            )}
+                            scrollEnabled={false} 
+                            keyExtractor={(item) => item.id}
+                            nestedScrollEnabled
+                            contentContainerStyle={{ paddingBottom: 16 }}
+                        />
+                    </>
+                )}
             </View>
         </ContainerView>
     );
