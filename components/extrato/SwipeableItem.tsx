@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Animated, PanResponder, Modal, TouchableWithoutFeedback, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { formatCurrency, transformType } from '../utils/utils';
-import { TransactionType } from '../utils/config';
+import { ItemPropsExtrato, TransactionType } from '../utils/config';
 import { ThemedText } from '../ThemedText';
 import { IconSymbol } from '../ui/IconSymbol';
 import { ThemedView } from '../ThemedView';
@@ -14,14 +14,29 @@ interface SwipeableItemProps {
     valor: number;
     data: string;
     onDelete: (id: string) => void;
-    onEdit: (id: string, tipo: TransactionType) => void;
+    onEdit: (newItem: ItemPropsExtrato) => void;
+    resetSwipe: any,
+    setResetSwipe: any
 }
-export default function SwipeableItem({ id, mes, tipo, valor, data, onDelete, onEdit }: SwipeableItemProps)  {
+export default function SwipeableItem({ id, mes, tipo, valor, data, onDelete, onEdit, resetSwipe, setResetSwipe }: SwipeableItemProps)  {
     const iconColor = useThemeColor({ light: '#000000', dark: '#ffffff' }, 'icon');
     const [pan] = useState(new Animated.ValueXY());
     const [showOptions, setShowOptions] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [selectedType, setSelectedType] = useState<TransactionType>(tipo);
+    
+    useEffect(() => {
+        if (resetSwipe) {
+            setShowOptions(false);
+            Animated.spring(pan, {
+                toValue: { x: 0, y: 0 },
+                useNativeDriver: true,
+
+            }).start(() => {
+                setResetSwipe(false); 
+            });
+        }
+    }, [resetSwipe]);
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
@@ -33,7 +48,7 @@ export default function SwipeableItem({ id, mes, tipo, valor, data, onDelete, on
             if (gestureState.dx < -30) {
                 setShowOptions(true);
                 Animated.spring(pan, {
-                    toValue: { x: -100, y: 0 },
+                    toValue: { x: -80, y: 0 },
                     useNativeDriver: true,
                 }).start();
             } else {
@@ -96,7 +111,7 @@ export default function SwipeableItem({ id, mes, tipo, valor, data, onDelete, on
                                 <TouchableOpacity
                                     key={tipoOption}
                                     style={styles.modalButton}
-                                    onPress={() => handleEditType(tipoOption as TransactionType)}
+                                    onPress={() => handleEditType(tipoOption as TransactionType, )}
                                 >
                                     <ThemedText type="primary" style={styles.modalButtonText}>
                                         {transformType(tipoOption as TransactionType)}
@@ -111,8 +126,9 @@ export default function SwipeableItem({ id, mes, tipo, valor, data, onDelete, on
     );
 
     const handleEditType = (newTipo: TransactionType) => {
+        const newItem: ItemPropsExtrato = { id, mes, tipo: newTipo, valor, data };
         setSelectedType(newTipo);
-        onEdit(id, newTipo);
+        onEdit(newItem);
         setShowEdit(false);
     };
 

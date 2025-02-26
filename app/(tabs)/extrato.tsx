@@ -1,26 +1,43 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, View, Alert, TextInput } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import ContainerView from '@/components/ContainerView';
 import { ItemPropsExtrato, TransactionType } from '@/components/utils/config';
-import { DATA_EXTRATO } from '@/components/utils/mock';
 import SwipeableItem from '@/components/extrato/SwipeableItem';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { useFocusEffect } from '@react-navigation/native';
+import extratoFirestore from '../services/extrato-firestore';
 
-
-const DATA: ItemPropsExtrato[] = DATA_EXTRATO;
 
 export default function TabExtratoScreen() {
     const textColor = useThemeColor({ light: '#000000', dark: '#ffffff' }, 'text');
     const [searchQuery, setSearchQuery] = useState('');
-    const [data, setData] = useState<ItemPropsExtrato[]>(DATA);
-    const filteredData = data.filter(item => {
-        return item.mes.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.tipo.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.data.toLowerCase().includes(searchQuery.toLowerCase());
-    });
+    const [data, setData] = useState<ItemPropsExtrato[]>([]);
+    const [resetSwipe, setResetSwipe] = useState(false); // Estado para resetar o swipe
+
+    const fetchData = async () => {
+        try {
+          const transactions = await extratoFirestore.getTransactions();
+          setData(transactions);
+        } catch (error) {
+          console.error('Erro ao buscar transações:', error);
+        }
+      };
+    
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+        }, [])
+      
+    );
+
+    const filteredData = data.filter(item =>
+        item.mes.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.tipo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.data.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
 
     const handleDelete = (id: string) => {
@@ -29,19 +46,23 @@ export default function TabExtratoScreen() {
             'Você tem certeza que deseja excluir a Transação ' + id + ' ?',
             [
                 { text: 'Cancelar', style: 'cancel' },
-                { text: 'Excluir', onPress: () => { setData(prevData => prevData.filter(item => item.id !== id)) } },
+                { text: 'Excluir',  onPress: async () => {
+                    await extratoFirestore.deleteTransaction(id);
+                    fetchData();
+                }, },
             ],
         );
     };
 
-    const handleEdit = (id: string, newTipo: TransactionType) => {
-
-        setData(prevData =>
-            prevData.map(item =>
-                item.id === id ? { ...item, tipo: newTipo } : item
-            )
-        );
-        confirmEdit(id);
+    const handleEdit = async ( newItem: ItemPropsExtrato) => {
+        try {
+            await extratoFirestore.updateTransaction(newItem.id, newItem); 
+            fetchData(); 
+            confirmEdit(newItem.id);
+            setResetSwipe(true); // Dispara o reset
+          } catch (error) {
+            Alert.alert('Erro', 'Não foi possível editar a transação.');
+          }
     };
     const confirmEdit = (id: string) => {
         Alert.alert(
@@ -74,7 +95,7 @@ export default function TabExtratoScreen() {
                         <FlatList
                             data={filteredData}
                             renderItem={({ item }) => (
-                                <SwipeableItem {...item} onDelete={handleDelete} onEdit={handleEdit} />
+                                <SwipeableItem {...item} onDelete={handleDelete} onEdit={handleEdit} resetSwipe={resetSwipe} setResetSwipe={setResetSwipe}  />
                             )}
                             scrollEnabled={false} 
                             keyExtractor={(item) => item.id}
