@@ -1,17 +1,14 @@
 import React, { FC } from "react";
 import { View, Text, Image } from "react-native";
 import styled, { css } from "styled-components";
-import DeviceInfo from "react-native-device-info";
 
 type CardContainerProps = {
   title?: string;
   children: React.ReactNode;
 };
 export const CardContainer: FC<CardContainerProps> = ({ title, children }) => {
-  let isTablet = DeviceInfo.isTablet();
   return (
     <ViewUI>
-      {isTablet}
       <ImageUI
         source={require("@/assets/images/textura.png")}
         style={{ left: 0, top: 0, zIndex: 0 }}
