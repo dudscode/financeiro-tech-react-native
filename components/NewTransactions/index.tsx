@@ -1,9 +1,19 @@
 import React, { FC, useState } from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Alert } from "react-native";
 import MaskInput, { createNumberMask } from "react-native-mask-input";
 import { Select } from "@/components/Select";
 import styled from "styled-components";
+import { TransactionType } from "../utils/config";
+import { transformValue } from "@/components/utils/utils";
+
 import { Button } from "@/components/Button";
+import { CardContainer } from "@/components/CardContainer";
+import extratoFirestore from "@/app/services/extrato-firestore";
+
+const formatMonth = () => {
+  const data = new Date().toLocaleString("pt-BR", { month: "long" });
+  return data.charAt(0).toUpperCase() + data.slice(1);
+};
 
 type Transactions = {
   number: number;
@@ -11,7 +21,7 @@ type Transactions = {
 };
 
 type NewTransactionsProps = {
-  callback: (transaction: Transactions) => void;
+  callback?: (transaction: Transactions) => void;
 };
 
 const mask = createNumberMask({
@@ -21,13 +31,17 @@ const mask = createNumberMask({
   precision: 2,
 });
 
-export const NewTransactions: FC<NewTransactionsProps> = ({ callback }) => {
-  const [selectedTransaction, setSelectedTransaction] = useState("");
-  const [number, onChangeNumber] = useState("");
+const confirmTransaction = (id: string) => {
+  Alert.alert("Sucesso", "Transação adicionada com sucesso!");
+};
+
+export const NewTransactions: FC<NewTransactionsProps> = () => {
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<TransactionType>("transfer");
+  const [number, onChangeNumber] = useState<string | undefined>("");
 
   return (
-    <ViewUI>
-      <Title>Nova Transação</Title>
+    <CardContainer title="Nova Transação">
       <Select
         items={[
           { value: "deposit", label: "Depósito" },
@@ -39,13 +53,15 @@ export const NewTransactions: FC<NewTransactionsProps> = ({ callback }) => {
           { value: "docted", label: "DOC/TED" },
         ]}
         selectedValue={selectedTransaction}
-        onValueChange={(itemValue) => setSelectedTransaction(itemValue)}
+        onValueChange={(itemValue) =>
+          setSelectedTransaction(itemValue as TransactionType)
+        }
       />
       <Container>
         <TextUI>Valor</TextUI>
         <Input
-          onChangeText={(_, unmasked) => {
-            onChangeNumber(unmasked);
+          onChangeText={(masked) => {
+            onChangeNumber(masked);
           }}
           value={number}
           placeholder="00,00"
@@ -55,43 +71,46 @@ export const NewTransactions: FC<NewTransactionsProps> = ({ callback }) => {
       </Container>
       <ButtonUI
         title="Concluir transação"
-        onPress={() => {
-          callback({ number: parseFloat(number), selectedTransaction });
+        onPress={async () => {
+          if (!selectedTransaction) {
+            Alert.alert("Erro", "Selecione uma transação");
+            return;
+          }
+          if (!number || !parseFloat(number) || parseFloat(number) <= 0) {
+            Alert.alert("Erro", "Adicione um valor");
+            return;
+          }
+          // if (parseFloat(number) <= 0) {
+          //   Alert.alert("Valor maior que o saldo");
+          //   return;
+          // }
+
+          try {
+            const id = new Date().getTime().toString();
+            await extratoFirestore.addTransaction({
+              mes: formatMonth(),
+              data: new Date().toLocaleDateString(),
+              tipo: selectedTransaction,
+              valor: transformValue(
+                selectedTransaction,
+                parseFloat(number!.replace(/\./g, "").replace(",", "."))
+              ),
+              id,
+            });
+            confirmTransaction(id);
+            setSelectedTransaction("transfer");
+            onChangeNumber(undefined);
+          } catch (error) {
+            console.error("Erro ao adicionar transação:", error);
+            Alert.alert("Erro", "Não foi possível adicionar a transação.");
+          }
         }}
       />
-      <Image
-        source={require("@/assets/images/ilustration.png")}
-        style={{ margin: 0, alignSelf: "center", zIndex: 2 }}
-      />
-      <ImageUI
-        source={require("@/assets/images/textura.png")}
-        style={{ right: 0, bottom: 0 }}
-      />
-    </ViewUI>
+    </CardContainer>
   );
 };
 
 export default NewTransactions;
-
-const ImageUI = styled(Image)`
-  position: absolute;
-  pointer-events: none;
-  z-index: 1;
-`;
-
-const ViewUI = styled(View)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  position: relative;
-  background-color: #cbcbcb;
-  width: 100%;
-  padding: 32px 16px 27px 16px;
-  border-radius: 8px;
-  overflow: hidden;
-`;
 
 const Container = styled(View)`
   display: flex;
@@ -100,12 +119,6 @@ const Container = styled(View)`
   justify-content: center;
   gap: 16px;
   width: 100%;
-`;
-
-const Title = styled(Text)`
-  font-size: 25px;
-  font-weight: bold;
-  color: #dee9ea;
 `;
 
 const TextUI = styled(Text)`
