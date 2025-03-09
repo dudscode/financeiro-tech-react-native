@@ -12,7 +12,6 @@ export default function HomeScreen() {
   return (
     <ContainerView>
       <View style={styles.titleContainer}>
-        {/* <ThemedText type="title">Balance Card</ThemedText> */}
         <BalanceCard saldo={saldo} loading={loading} />
       </View>
       <View style={styles.titleContainer}>
