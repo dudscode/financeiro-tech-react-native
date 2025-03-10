@@ -9,6 +9,7 @@ import { transformValue } from "@/components/utils/utils";
 import { Button } from "@/components/Button";
 import { CardContainer } from "@/components/CardContainer";
 import extratoFirestore from "@/app/services/extrato-firestore";
+import { useExtrato } from "@/app/context/ExtratoContext";
 
 const formatMonth = () => {
   const data = new Date().toLocaleString("pt-BR", { month: "long" });
@@ -39,6 +40,7 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionType>("transfer");
   const [number, onChangeNumber] = useState<string | undefined>("");
+  const { data, totalDespesas, totalReceitas, saldo, fetchData } = useExtrato();
 
   return (
     <CardContainer title="Nova Transação">
@@ -100,6 +102,7 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
             confirmTransaction(id);
             setSelectedTransaction("transfer");
             onChangeNumber(undefined);
+            fetchData();
           } catch (error) {
             console.error("Erro ao adicionar transação:", error);
             Alert.alert("Erro", "Não foi possível adicionar a transação.");
