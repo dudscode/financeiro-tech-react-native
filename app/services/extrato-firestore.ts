@@ -1,6 +1,6 @@
 import { ItemPropsExtrato } from "@/components/utils/config";
 import db from "../firebase/config";
-import { collection, addDoc, getDocs, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, query, orderBy } from "firebase/firestore";
 
 const addTransaction = async (transaction: ItemPropsExtrato) => {
   try {
@@ -12,7 +12,8 @@ const addTransaction = async (transaction: ItemPropsExtrato) => {
 };
 const getTransactions = async (): Promise<ItemPropsExtrato[]> => {
   try {
-    const querySnapshot = await getDocs(collection(db, "extrato"));
+    const q = query(collection(db, "extrato"), orderBy("data", "desc"));
+    const querySnapshot = await getDocs(q);
     const transactions: ItemPropsExtrato[] = querySnapshot.docs.map(doc => {
       const data = doc.data();
       return {
