@@ -1,47 +1,39 @@
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 
 import ContainerView from "@/components/ContainerView";
-import { ThemedText } from "@/components/ThemedText";
-import { addDoc, collection } from "firebase/firestore";
-import db from "../firebase/config";
-import extratoFirestore from "../services/extrato-firestore";
-import { ItemPropsExtrato } from "@/components/utils/config";
-import { useState } from "react";
 import { BalanceCard } from "@/components/BalanceCard";
+import { NewTransactions } from "@/components/NewTransactions";
+import { useExtrato } from "../context/ExtratoContext";
 
 export default function TabTwoScreen() {
-  const [saldo, setSaldo] = useState({ tipo: "Conta Corrente", valor: 5000 });
-  const [loading, setLoading] = useState(false);
+  const { saldo, fetchData } = useExtrato();
+  const [loading, setLoading] = useState(true);
 
-  const handleAddTransaction = async () => {
-    try {
-      const newTransaction: ItemPropsExtrato = {
-        id: Math.floor(Math.random() * 1000).toString(),
-        mes: "Fevereiro",
-        tipo: "payment",
-        data: new Date().toLocaleDateString(),
-        valor: 50,
-      };
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await fetchData();
+      setLoading(false);
+    };
 
-      await extratoFirestore.addTransaction(newTransaction);
-      Alert.alert("Sucesso", "Transação adicionada com sucesso!");
-    } catch (error) {
-      console.error("Erro ao adicionar transação:", error);
-      Alert.alert("Erro", "Não foi possível adicionar a transação.");
-    }
-  };
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <ContainerView>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </ContainerView>
+    );
+  }
 
   return (
     <ContainerView>
       <View style={styles.titleContainer}>
         <BalanceCard saldo={saldo} loading={loading} />
       </View>
-      <View style={styles.titleContainer}>
-        <ThemedText type="title">Transacoes</ThemedText>
-      </View>
-      <TouchableOpacity style={styles.addButton} onPress={handleAddTransaction}>
-        <Text style={styles.addButtonText}>Adicionar Transação</Text>
-      </TouchableOpacity>
+      <NewTransactions />
     </ContainerView>
   );
 }

@@ -76,6 +76,7 @@ export const styles = StyleSheet.create({
     opacity: 0.3,
     width: 70,
     height: 70,
+    borderRadius: 8,
   },
   imageBottomEdge: {
     position: "absolute",
@@ -84,6 +85,7 @@ export const styles = StyleSheet.create({
     opacity: 0.3,
     width: 70,
     height: 70,
+    borderRadius: 8,
   },
   imagePerson: {
     position: "absolute",

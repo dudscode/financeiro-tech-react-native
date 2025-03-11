@@ -11,14 +11,9 @@ import { useIsTablet } from "../../hooks/useIsTablet";
 import { styles } from "./styles";
 import { MaterialIcons } from "@expo/vector-icons";
 
-interface Saldo {
-  tipo: string;
-  valor: number;
-}
-
 interface BalanceCardProps {
-  saldo: Saldo;
-  loading: boolean;
+  saldo: number;
+  loading?: boolean;
 }
 
 export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
@@ -69,7 +64,7 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
             <View style={styles.balanceLine} />
             <Text style={styles.accountType}>Conta Corrente</Text>
             <Text style={styles.balanceAmount}>
-              {isVisible ? formatarValor(saldo.valor) : "****"}
+              {isVisible ? formatarValor(saldo) : "****"}
             </Text>
           </View>
         )}
