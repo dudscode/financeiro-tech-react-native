@@ -7,6 +7,7 @@ export const Container = styled(KeyboardAvoidingView)`
   align-items: center;
   background-color: #fff;
   padding: 20px;
+  font-family: "Inter_400Regular";
 `;
 
 export const LogoContainer = styled.View`
@@ -36,6 +37,7 @@ export const StyledTextInput = styled(TextInput)<
   padding: 10px;
   margin-bottom: 15px;
   font-size: 16px;
+  font-family: "Inter_400Regular";
 `;
 
 export const Button = styled.TouchableOpacity`
@@ -51,6 +53,7 @@ export const ButtonText = styled.Text`
   color: #ffffff;
   font-size: 16px;
   font-weight: bold;
+  font-family: "Inter_600SemiBold";
 `;
 
 export const ErrorText = styled.Text`
@@ -58,6 +61,7 @@ export const ErrorText = styled.Text`
   margin-bottom: 20px;
   align-self: flex-start;
   padding: 0 10px;
+  font-family: "Inter_400Regular";
 `;
 
 export const DividerContainer = styled.View`
@@ -77,6 +81,7 @@ export const DividerText = styled.Text`
   margin: 0 10px;
   font-size: 14px;
   color: #999999;
+  font-family: "Inter_400Regular";
 `;
 
 export const GoogleButton = styled.TouchableOpacity`
@@ -96,6 +101,7 @@ export const GoogleButtonText = styled.Text`
   font-size: 16px;
   font-weight: bold;
   /* padding-left: 15px; */
+  font-family: "Inter_600SemiBold";
 `;
 
 export const GoogleLogo = styled.Image`
@@ -120,6 +126,17 @@ export const SignUpLink = styled.TouchableOpacity`
 `;
 
 export const SignUpLinkText = styled.Text`
+  color: #47a138;
+  font-size: 14px;
+  font-weight: bold;
+`;
+
+export const ForgotPasswordLink = styled.TouchableOpacity`
+  margin-top: 10px;
+  align-self: flex-end;
+`;
+
+export const ForgotPasswordText = styled.Text`
   color: #47a138;
   font-size: 14px;
   font-weight: bold;

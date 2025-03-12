@@ -6,6 +6,7 @@ import * as S from "./styles";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import FloatingLabelInput from "@/components/ui/FloatingLabelInput";
 
 type RootStackParamList = {
   login: undefined;
@@ -61,13 +62,14 @@ const Login = () => {
           fieldState: { error },
         }) => (
           <>
-            <S.StyledTextInput
-              placeholder="Email"
+            <FloatingLabelInput
+              label="Email"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               hasError={!!error}
               keyboardType="email-address"
+              autoCapitalize="none"
             />
             {error && <S.ErrorText>{error.message}</S.ErrorText>}
           </>
@@ -83,18 +85,23 @@ const Login = () => {
           fieldState: { error },
         }) => (
           <>
-            <S.StyledTextInput
-              placeholder="Senha"
+            <FloatingLabelInput
+              label="Senha"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               hasError={!!error}
               secureTextEntry
+              autoCapitalize="none"
             />
             {error && <S.ErrorText>{error.message}</S.ErrorText>}
           </>
         )}
       />
+
+      <S.ForgotPasswordLink>
+        <S.ForgotPasswordText>Esqueceu a senha?</S.ForgotPasswordText>
+      </S.ForgotPasswordLink>
 
       <S.Button onPress={handleSubmit(onSubmit)}>
         <S.ButtonText>Entrar</S.ButtonText>
