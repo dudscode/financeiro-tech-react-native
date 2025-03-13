@@ -1,10 +1,16 @@
 import React, { useState } from "react";
-import { TextInputProps } from "react-native";
+import { KeyboardTypeOptions, TextInputProps } from "react-native";
 import styled from "styled-components/native";
 
-interface FloatingLabelInputProps extends TextInputProps {
+interface FloatingLabelInputProps extends TextInputProps{
   label: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  onBlur: () => void;
   hasError?: boolean;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
+  autoCapitalize?: "none" | "sentences" | "words" | "characters";
 }
 
 const Container = styled.View`
@@ -30,7 +36,7 @@ const Label = styled.Text<{
   }) => (isFocused || hasValue ? "12px" : "16px")};
   color: ${({ hasError }: { hasError: boolean }) =>
     hasError ? "red" : "#999"};
-  background-color: #fff;
+  background-color: #f8f8f8;
   padding: 0 5px;
   z-index: 1;
 `;
@@ -45,13 +51,17 @@ const Input = styled.TextInput<{ hasError: boolean }>`
   font-size: 16px;
 `;
 
+
+
 const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   label,
-  hasError = false,
-  ...props
+  value,
+  onChangeText,
+  onBlur,
+  hasError,
+  ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [value, setValue] = useState("");
 
   return (
     <Container>
@@ -59,12 +69,12 @@ const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
         {label}
       </Label>
       <Input
-        {...props}
-        hasError={hasError}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onChangeText={(text: React.SetStateAction<string>) => setValue(text)}
-        value={value}
+         value={value}
+         onChangeText={onChangeText}
+         onFocus={() => setIsFocused(true)}
+         onBlur={() => {onBlur(); setIsFocused(false);}}
+         hasError={hasError}
+        {...rest}
       />
     </Container>
   );

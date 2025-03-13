@@ -1,17 +1,12 @@
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Alert, Platform } from "react-native";
-import * as S from "./styles";
+import { useRouter } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useAuth } from "@/context/AuthContext";
 import FloatingLabelInput from "@/components/ui/FloatingLabelInput";
-
-type RootStackParamList = {
-  login: undefined;
-  signup: undefined;
-};
+import * as S from "./styles";
 
 const schema = yup.object().shape({
   email: yup.string().email("Email inválido").required("Email obrigatório"),
@@ -21,20 +16,34 @@ const schema = yup.object().shape({
     .required("Senha obrigatória"),
 });
 
+type FormData = {
+  email: string;
+  password: string;
+};
+
 const Login = () => {
-  const { signIn } = useAuth();
+  const { isAuthenticated, signIn } = useAuth();
   const router = useRouter();
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit } = useForm<FormData>({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Login realizado com sucesso!", data);
-    // Aqui você pode adicionar a lógica de autenticação e redirecionamento
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/(tabs)");
+    }
+  }, [isAuthenticated, router]);
 
-    signIn();
-    router.replace("/(tabs)");
+
+  const onSubmit = async (data: FormData) => {
+    try{
+      await signIn(data.email, data.password);
+      console.log('Login realizado com sucesso!', data);
+      router.replace('/(tabs)');
+    }catch(error: any){
+      Alert.alert("Erro" , error.message || "Erro ao fazer login");
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -43,7 +52,7 @@ const Login = () => {
   };
 
   const handleSignUp = () => {
-    router.push("/signup");
+    router.replace('/signup');
   };
 
   return (
@@ -67,9 +76,9 @@ const Login = () => {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              hasError={!!error}
               keyboardType="email-address"
               autoCapitalize="none"
+              hasError={!!error}
             />
             {error && <S.ErrorText>{error.message}</S.ErrorText>}
           </>
@@ -99,9 +108,9 @@ const Login = () => {
         )}
       />
 
-      <S.ForgotPasswordLink>
+      {/* <S.ForgotPasswordLink>
         <S.ForgotPasswordText>Esqueceu a senha?</S.ForgotPasswordText>
-      </S.ForgotPasswordLink>
+      </S.ForgotPasswordLink> */}
 
       <S.Button onPress={handleSubmit(onSubmit)}>
         <S.ButtonText>Entrar</S.ButtonText>
