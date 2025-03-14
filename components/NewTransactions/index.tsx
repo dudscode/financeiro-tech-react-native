@@ -39,8 +39,9 @@ const confirmTransaction = (id: string) => {
 export const NewTransactions: FC<NewTransactionsProps> = () => {
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionType>("transfer");
+  const [loading, setLoading] = useState(false);
   const [number, onChangeNumber] = useState<string | undefined>("");
-  const { data, totalDespesas, totalReceitas, saldo, fetchData } = useExtrato();
+  const { saldo, fetchData } = useExtrato();
 
   return (
     <CardContainer title="Nova Transação">
@@ -73,19 +74,36 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
       </Container>
       <ButtonUI
         title="Concluir transação"
+        loading={loading}
         onPress={async () => {
+          setLoading(true);
+          const isDespesa = [
+            "payment",
+            "withdraw",
+            "transfer",
+            "loan",
+            "docted",
+          ].includes(selectedTransaction);
           if (!selectedTransaction) {
             Alert.alert("Erro", "Selecione uma transação");
+            setLoading(false);
             return;
           }
           if (!number || !parseFloat(number) || parseFloat(number) <= 0) {
             Alert.alert("Erro", "Adicione um valor");
+            setLoading(false);
             return;
           }
-          // if (parseFloat(number) <= 0) {
-          //   Alert.alert("Valor maior que o saldo");
-          //   return;
-          // }
+          if (saldo < 0 && isDespesa) {
+            Alert.alert("Saldo insuficiente");
+            setLoading(false);
+            return;
+          }
+          if (parseFloat(number) > saldo && isDespesa) {
+            Alert.alert("Valor maior que o saldo");
+            setLoading(false);
+            return;
+          }
 
           try {
             const id = new Date().getTime().toString();
@@ -103,7 +121,9 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
             setSelectedTransaction("transfer");
             onChangeNumber(undefined);
             fetchData();
+            setLoading(false);
           } catch (error) {
+            setLoading(false);
             console.error("Erro ao adicionar transação:", error);
             Alert.alert("Erro", "Não foi possível adicionar a transação.");
           }
