@@ -51,15 +51,4 @@ const styles = StyleSheet.create({
     color: "white",
     marginTop: 60,
   },
-  addButton: {
-    backgroundColor: "#47A138",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  addButtonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
 });
