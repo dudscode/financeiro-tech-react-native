@@ -3,19 +3,17 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import "react-native-reanimated";
+
 import {
   Inter_900Black,
   Inter_600SemiBold,
   Inter_400Regular,
-  useFonts as useInterFonts,
 } from "@expo-google-fonts/inter";
-import {
-  Roboto_400Regular,
-  Roboto_500Medium,
-  useFonts as useRobotoFonts,
-} from "@expo-google-fonts/roboto";
+import { Roboto_400Regular, Roboto_500Medium } from "@expo-google-fonts/roboto";
 import { Slot } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -26,27 +24,22 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
-  const [interLoaded] = useInterFonts({
-    Inter_900Black,
-    Inter_600SemiBold,
+  const [fontsLoaded] = useFonts({
     Inter_400Regular,
-  });
-
-  const [robotoLoaded] = useRobotoFonts({
+    Inter_600SemiBold,
+    Inter_900Black,
     Roboto_400Regular,
     Roboto_500Medium,
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  const loaded = interLoaded && robotoLoaded;
-
   useEffect(() => {
-    if (loaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded]);
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
 

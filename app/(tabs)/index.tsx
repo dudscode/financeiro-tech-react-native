@@ -1,29 +1,44 @@
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 
 import ContainerView from "@/components/ContainerView";
 import { ThemedText } from "@/components/ThemedText";
+import { BalanceCard } from "@/components/BalanceCard";
+
 import { useExtrato } from "../context/ExtratoContext";
 import ChartComponent from "@/components/chart-invest/chartComponent";
 
 export default function HomeScreen() {
-  const { data, totalDespesas, totalReceitas, saldo, fetchData } = useExtrato();
+  const { saldo, fetchData } = useExtrato();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      await fetchData();
+      setLoading(false);
+    };
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <ContainerView>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </ContainerView>
+    );
+  }
 
   return (
     <ContainerView>
       <View style={styles.titleContainer}>
-        <ThemedText type="title">Balance Card</ThemedText>
-        <View style={styles.summaryContainer}>
-          <ThemedText type="erro">
-            Gastos: R$ {totalDespesas.toFixed(2)}
-          </ThemedText>
-          <ThemedText type="primary">
-            Receitas: R$ {totalReceitas.toFixed(2)}
-          </ThemedText>
-          <ThemedText type="info">Saldo: R$ {saldo.toFixed(2)}</ThemedText>
-        </View>
+        <BalanceCard saldo={saldo} loading={loading} />
       </View>
-      <View style={styles.titleContainer}>
-        <ThemedText type="title">Sua evolução financeira </ThemedText>
+      <View style={styles.chartContainer}>
+        <ThemedText type="title" style={styles.titleChart}>
+          Sua evolução financeira
+        </ThemedText>
         <ChartComponent />
       </View>
     </ContainerView>
@@ -32,9 +47,10 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    flexDirection: "column",
-    gap: 8,
     color: "white",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     marginTop: 60,
   },
   stepContainer: {
@@ -53,5 +69,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginVertical: 10,
     paddingHorizontal: 16,
+  },
+  chartContainer: {
+    flexDirection: "column",
+    marginTop: 10,
+  },
+  titleChart: {
+    fontSize: 24,
+    marginBottom: 12,
   },
 });
