@@ -10,6 +10,7 @@ import { Button } from "@/components/Button";
 import { CardContainer } from "@/components/CardContainer";
 import extratoFirestore from "@/app/services/extrato-firestore";
 import { useExtrato } from "@/app/context/ExtratoContext";
+import FileUploader from "@/components/FileUpload";
 
 const formatMonth = () => {
   const data = new Date().toLocaleString("pt-BR", { month: "long" });
@@ -71,6 +72,7 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
           keyboardType="numeric"
           mask={mask}
         />
+        <FileUploader />
       </Container>
       <ButtonUI
         title="Concluir transação"
