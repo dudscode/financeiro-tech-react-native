@@ -1,9 +1,15 @@
 import { auth } from "@/app/firebase/config";
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextData {
   isAuthenticated: boolean;
+  userEmail: string | null;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOutUser: () => Promise<void>;
@@ -15,38 +21,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuthenticated(!!user);
+      setUserEmail(user?.email || null);
     });
     return unsubscribe;
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    try{
+    try {
       await signInWithEmailAndPassword(auth, email, password);
       setIsAuthenticated(true);
-    }catch(error: any){
-      console.error('Erro ao fazer login', error);
+    } catch (error: any) {
+      console.error("Erro ao fazer login", error);
       throw error;
     }
   };
 
-  const signUp = async (email: string, password: string)=>{
-      try{
-        createUserWithEmailAndPassword(auth, email, password);
-        setIsAuthenticated(true);
-      }catch(error: any){
-        console.error('Erro ao fazer cadastro', error);
-        throw error;
-      }
+  const signUp = async (email: string, password: string) => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      setIsAuthenticated(true);
+    } catch (error: any) {
+      console.error("Erro ao fazer cadastro", error);
+      throw error;
+    }
   };
 
   const signOutUser = async () => {
     try {
       await signOut(auth);
       setIsAuthenticated(false);
+      setUserEmail(null);
     } catch (error: any) {
       console.error("Erro ao fazer logout:", error);
       throw error;
@@ -54,7 +63,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signUp, signOutUser }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, userEmail, signIn, signUp, signOutUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

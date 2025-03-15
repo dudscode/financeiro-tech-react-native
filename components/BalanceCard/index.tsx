@@ -10,6 +10,7 @@ import { useCurrencyFormatter } from "../../hooks/useCurrencyFormatter";
 import { useIsTablet } from "../../hooks/useIsTablet";
 import { styles } from "./styles";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useAuth } from "@/context/AuthContext";
 
 interface BalanceCardProps {
   saldo: number;
@@ -21,6 +22,7 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
   const [currentDate, setCurrentDate] = useState("");
   const { formatarValor } = useCurrencyFormatter();
   const isTablet = useIsTablet();
+  const { userEmail } = useAuth();
 
   useEffect(() => {
     setCurrentDate(formatCurrentDate());
@@ -35,10 +37,17 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
     return new Date().toLocaleDateString("pt-BR", options);
   }
 
+  const getUserName = () => {
+    if (userEmail) {
+      return userEmail.split("@")[0];
+    }
+    return "Usuário";
+  };
+
   return (
     <View style={[styles.container, isTablet && styles.tabletContainer]}>
       <View style={styles.header}>
-        <Text style={styles.greeting}>Olá, Joana! :)</Text>
+        <Text style={styles.greeting}>Olá, {getUserName()}! :)</Text>
         <Text style={styles.date}>{currentDate}</Text>
       </View>
 
