@@ -42,7 +42,9 @@ export const ExtratoProvider: React.FC<{ children: ReactNode }> = ({ children })
 
       setTotalReceitas(receitas);
       setTotalDespesas(despesas);
-      setSaldo(receitas - despesas);
+      const despesasCorrigidas = Math.abs(despesas);
+      setSaldo(receitas - despesasCorrigidas);
+
 
     } catch (error) {
       console.error('Erro ao buscar transações:', error);
