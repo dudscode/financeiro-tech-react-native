@@ -1,8 +1,7 @@
 import React, { FC, useState } from "react";
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, StyleSheet } from "react-native";
 import MaskInput, { createNumberMask } from "react-native-mask-input";
 import { Select } from "@/components/Select";
-import styled from "styled-components";
 import { TransactionType } from "../utils/config";
 import { transformValue } from "@/components/utils/utils";
 
@@ -60,9 +59,10 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
           setSelectedTransaction(itemValue as TransactionType)
         }
       />
-      <Container>
-        <TextUI>Valor</TextUI>
-        <Input
+      <View style={[styles.container]}>
+        <Text style={[styles.text]}>Valor</Text>
+        <MaskInput
+          style={[styles.searchInput]}
           onChangeText={(masked) => {
             onChangeNumber(masked);
           }}
@@ -71,8 +71,9 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
           keyboardType="numeric"
           mask={mask}
         />
-      </Container>
-      <ButtonUI
+      </View>
+      <Button
+        style={styles.button}
         title="Concluir transação"
         loading={loading}
         onPress={async () => {
@@ -135,33 +136,28 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
 
 export default NewTransactions;
 
-const Container = styled(View)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  width: 100%;
-`;
-
-const TextUI = styled(Text)`
-  font-size: 16px;
-  font-weight: bold;
-  color: #dee9ea;
-`;
-
-const Input = styled(MaskInput)`
-  background-color: #fff;
-  border-radius: 4px;
-  min-width: 100px;
-  text-align: center;
-  padding: 15px;
-  max-width: 100%;
-`;
-
-const ButtonUI = styled(Button)`
-  background-color: #004d61;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 100px;
-`;
+const styles = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 16,
+    width: "100%",
+  },
+  text: { fontSize: 16, fontWeight: "bold", color: "#dee9ea" },
+  button: {
+    backgroundColor: "#004d61",
+    borderRadius: 8,
+    width: "100%",
+    margin: "auto",
+  },
+  searchInput: {
+    backgroundColor: "#fff",
+    borderRadius: 4,
+    minWidth: 100,
+    textAlign: "center",
+    padding: 15,
+    maxWidth: "100%",
+  },
+});

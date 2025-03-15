@@ -6,12 +6,22 @@ type AppButtonProps = {
   onPress: () => void;
   title: string;
   loading?: boolean;
+  style?: any;
 };
 
-export const Button: FC<AppButtonProps> = ({ onPress, title, loading }) => (
+export const Button: FC<AppButtonProps> = ({
+  onPress,
+  title,
+  loading,
+  style,
+}) => (
   <TouchableOpacity
     onPress={onPress}
-    style={!loading ? styles.appButtonContainer : styles.desabled}
+    style={
+      !loading
+        ? { ...styles.appButtonContainer, ...style }
+        : { ...styles.desabled, ...style }
+    }
   >
     {loading && <Loading />}
     {!loading && <Text style={styles.appButtonText}>{title}</Text>}
