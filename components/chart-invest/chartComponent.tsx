@@ -16,7 +16,7 @@ const ChartComponent = () => {
     },
     {
       name: 'Gastos',
-      population: totalDespesas,
+      population: Math.abs(totalDespesas),
       color: '#d50a0a',
     }
   ];
