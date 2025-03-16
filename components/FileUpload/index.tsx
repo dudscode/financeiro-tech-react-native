@@ -1,18 +1,10 @@
-import { TouchableOpacity, View, Text, Alert } from "react-native";
+import { View, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import { ref, uploadBytes } from "firebase/storage";
 import { storage, auth } from "@/app/firebase/config";
+import { Button } from "@/components/Button";
 
-type File = {
-  uri: string;
-  name: string;
-  size: number;
-  type: string;
-  mimeType: string;
-};
-
-export const uploadFile = async (file: File) => {
-  console.log("file: ", file);
+export const uploadFile = async (file: DocumentPicker.DocumentPickerAsset) => {
   Alert.alert("Enviado", JSON.stringify(file));
 
   // Convertendo o arquivo para Blob
@@ -33,7 +25,11 @@ export const uploadFile = async (file: File) => {
     });
 };
 
-export const FileUpload = () => {
+type FileUploadProps = {
+  callback: (file: DocumentPicker.DocumentPickerAsset) => void;
+};
+
+export const FileUpload = ({ callback }: FileUploadProps) => {
   const docPicker = async () => {
     let result = await DocumentPicker.getDocumentAsync({
       type: "image/*",
@@ -42,24 +38,15 @@ export const FileUpload = () => {
     const file = result?.assets?.[0];
 
     if (!!file) {
-      const { uri, name, size, mimeType } = file;
-      console.log("Arquivo selecionado:", { uri, name, size, mimeType });
-      Alert.alert(
-        "Arquivo selecionado",
-        `Nome: ${name}\nTamanho: ${size} bytes`
-      );
-      uploadFile(file);
+      callback(file);
     } else {
-      console.log("Usuário cancelou a seleção de arquivo");
       Alert.alert("Cancelado", "Nenhum arquivo foi selecionado.");
     }
   };
 
   return (
     <View>
-      <TouchableOpacity onPress={docPicker}>
-        <Text>{"Upload de Imagem"}</Text>
-      </TouchableOpacity>
+      <Button title="Upload de Imagem" onPress={docPicker} />
     </View>
   );
 };

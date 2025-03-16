@@ -10,7 +10,7 @@ import { CardContainer } from "@/components/CardContainer";
 import extratoFirestore from "@/app/services/extrato-firestore";
 import { useExtrato } from "@/app/context/ExtratoContext";
 
-import { FileUpload } from "../FileUpload";
+import { FileUpload, uploadFile } from "../FileUpload";
 
 const formatMonth = () => {
   const data = new Date().toLocaleString("pt-BR", { month: "long" });
@@ -38,6 +38,7 @@ const confirmTransaction = (id: string) => {
 };
 
 export const NewTransactions: FC<NewTransactionsProps> = () => {
+  const [file, setUploadFile] = useState<any>();
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionType>("transfer");
   const [loading, setLoading] = useState(false);
@@ -74,7 +75,8 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
           mask={mask}
         />
       </View>
-      <FileUpload />
+      <FileUpload callback={setUploadFile} />
+      {file?.name && <Text>{file?.name}</Text>}
       <Button
         style={styles.button}
         title="Concluir transação"
@@ -108,6 +110,11 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
             setLoading(false);
             return;
           }
+          if (file && file?.size > 1000000) {
+            Alert.alert("Erro", "O arquivo deve ter no máximo 1MB");
+            setLoading(false);
+            return;
+          }
 
           try {
             const id = new Date().getTime().toString();
@@ -124,11 +131,12 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
             confirmTransaction(id);
             setSelectedTransaction("transfer");
             onChangeNumber(undefined);
+            uploadFile(file);
+            setUploadFile(undefined);
             fetchData();
             setLoading(false);
           } catch (error) {
             setLoading(false);
-            console.error("Erro ao adicionar transação:", error);
             Alert.alert("Erro", "Não foi possível adicionar a transação.");
           }
         }}
