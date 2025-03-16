@@ -42,7 +42,7 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
   const [selectedTransaction, setSelectedTransaction] =
     useState<TransactionType>("transfer");
   const [loading, setLoading] = useState(false);
-  const [number, onChangeNumber] = useState<string | undefined>("");
+  const [number, onChangeNumber] = useState<string | undefined>();
   const { saldo, fetchData } = useExtrato();
 
   return (
@@ -66,10 +66,10 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
         <Text style={[styles.text]}>Valor</Text>
         <MaskInput
           style={[styles.searchInput]}
-          onChangeText={(masked) => {
-            onChangeNumber(masked);
+          onChangeText={(_, unmasked) => {
+            onChangeNumber(unmasked);
           }}
-          value={number}
+          value={number?.toString()}
           placeholder="00,00"
           keyboardType="numeric"
           mask={mask}
@@ -90,30 +90,26 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
             "loan",
             "docted",
           ].includes(selectedTransaction);
+          const formatNumber = number && parseFloat(number) / 100;
           if (!selectedTransaction) {
             Alert.alert("Erro", "Selecione uma transação");
             setLoading(false);
-            return;
+            return false;
           }
-          if (!number || !parseFloat(number) || parseFloat(number) <= 0) {
+          if (!formatNumber || formatNumber <= 0) {
             Alert.alert("Erro", "Adicione um valor");
             setLoading(false);
-            return;
+            return false;
           }
           if (saldo < 0 && isDespesa) {
             Alert.alert("Saldo insuficiente");
             setLoading(false);
-            return;
+            return false;
           }
-          if (parseFloat(number) > saldo && isDespesa) {
+          if (formatNumber > saldo && isDespesa) {
             Alert.alert("Valor maior que o saldo");
             setLoading(false);
-            return;
-          }
-          if (file && file?.size > 1000000) {
-            Alert.alert("Erro", "O arquivo deve ter no máximo 1MB");
-            setLoading(false);
-            return;
+            return false;
           }
 
           try {
@@ -122,17 +118,14 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
               mes: formatMonth(),
               data: new Date().toLocaleDateString(),
               tipo: selectedTransaction,
-              valor: transformValue(
-                selectedTransaction,
-                parseFloat(number!.replace(/\./g, "").replace(",", "."))
-              ),
+              valor: transformValue(selectedTransaction, formatNumber),
               id,
             });
             confirmTransaction(id);
             setSelectedTransaction("transfer");
             onChangeNumber(undefined);
-            uploadFile(file);
-            setUploadFile(undefined);
+            file && uploadFile(file);
+            file && setUploadFile(undefined);
             fetchData();
             setLoading(false);
           } catch (error) {
