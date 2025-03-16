@@ -5,7 +5,6 @@ import { storage, auth } from "@/app/firebase/config";
 import { Button } from "@/components/Button";
 
 export const uploadFile = async (file: DocumentPicker.DocumentPickerAsset) => {
-  Alert.alert("Enviado", JSON.stringify(file));
 
   // Convertendo o arquivo para Blob
   const response = await fetch(file.uri);
@@ -18,7 +17,7 @@ export const uploadFile = async (file: DocumentPicker.DocumentPickerAsset) => {
 
   uploadBytes(storageRef, blob)
     .then((snapshot) => {
-      Alert.alert("Sucesso", "Arquivo enviado com sucesso!");
+      console.log("Arquivo enviado com sucesso!")
     })
     .catch((error) => {
       Alert.alert("Erro", "Erro ao enviar arquivo.");

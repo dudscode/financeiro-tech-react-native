@@ -46,3 +46,25 @@ export const transformValue = (tipo: string, value: number) => {
       return value;
   }
 };
+export const transformValueEdit = (tipo: string, value: number) => {
+  const isNegative = value < 0;
+  
+  switch (tipo) {
+  case "deposit":
+  return Math.abs(value);
+  case "transfer":
+  return isNegative ? value : -value;
+  case "withdraw":
+  return isNegative ? value : -value;
+  case "payment":
+  return isNegative ? value : -value;
+  case "reversal":
+  return Math.abs(value);
+  case "loan":
+  return isNegative ? value : -value;
+  case "docted":
+  return isNegative ? value : -value;
+  default:
+  return value;
+  }
+  };
