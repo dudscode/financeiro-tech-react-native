@@ -1,6 +1,5 @@
 import React, { FC } from "react";
-import { View, Text, Image } from "react-native";
-import styled, { css } from "styled-components";
+import { StyleSheet, View, Text, Image } from "react-native";
 
 type CardContainerProps = {
   title?: string;
@@ -8,60 +7,55 @@ type CardContainerProps = {
 };
 export const CardContainer: FC<CardContainerProps> = ({ title, children }) => {
   return (
-    <ViewUI>
-      <ImageUI
+    <View style={[styles.view]}>
+      <Image
         source={require("@/assets/images/textura.png")}
-        style={{ left: 0, top: 0, zIndex: 0 }}
-        rotate={true}
+        style={[styles.imageRotate, { left: 0, top: 0 }]}
       />
-      {title && <Title>{title}</Title>}
+      {title && <Text style={[styles.title]}>{title}</Text>}
       {children}
       <Image
         source={require("@/assets/images/ilustration.png")}
         style={{ right: 0, bottom: 0, zIndex: 2 }}
       />
-      <ImageUI
+      <Image
         source={require("@/assets/images/textura.png")}
-        style={{ right: 0, bottom: 0, zIndex: 0 }}
+        style={[styles.image, { right: 0, bottom: 0 }]}
       />
-    </ViewUI>
+    </View>
   );
-};
-
-type ImageProps = {
-  rotate?: boolean;
 };
 
 export default CardContainer;
 
-const ImageUI = styled(Image)<ImageProps>`
-  ${({ rotate }) => css`
-    position: absolute;
-    pointer-events: none;
-    z-index: 1;
-    ${rotate &&
-    css`
-      transform: rotate(180deg);
-    `}
-  `}
-`;
-
-const ViewUI = styled(View)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  position: relative;
-  background-color: #cbcbcb;
-  width: 100%;
-  padding: 32px 16px 27px 16px;
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const Title = styled(Text)`
-  font-size: 25px;
-  font-weight: bold;
-  color: #dee9ea;
-`;
+const styles = StyleSheet.create({
+  image: {
+    position: "absolute",
+    pointerEvents: "none",
+    zIndex: -1,
+  },
+  imageRotate: {
+    position: "absolute",
+    pointerEvents: "none",
+    zIndex: -1,
+    transform: [{ rotate: "180deg" }],
+  },
+  view: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 32,
+    position: "relative",
+    backgroundColor: "#cbcbcb",
+    width: "100%",
+    padding: 32,
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  title: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#dee9ea",
+  },
+});
