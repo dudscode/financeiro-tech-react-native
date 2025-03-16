@@ -33,7 +33,7 @@ const SignUp = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await signUp(data.email, data.password);
+      await signUp(data.name, data.email, data.password);
       console.log("Cadastro realizado com sucesso!", data);
       Alert.alert("Sucesso", "Cadastro realizado com sucesso!");
       router.replace("/(tabs)");
@@ -51,7 +51,7 @@ const SignUp = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
-      <S.Title>Cadastrar</S.Title>
+      <S.Title>Cadastro</S.Title>
 
       <Controller
         control={control}
@@ -123,7 +123,7 @@ const SignUp = () => {
       <S.Button onPress={handleSubmit(onSubmit)}>
         <S.ButtonText>Cadastrar</S.ButtonText>
       </S.Button>
-      <S.Button onPress={handleLogin}>
+      <S.Button buttonType="secondary" onPress={handleLogin}>
         <S.ButtonText>Voltar para login</S.ButtonText>
       </S.Button>
     </S.Container>
