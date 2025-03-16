@@ -4,9 +4,11 @@ import { PieChart } from 'react-native-chart-kit';
 import { useExtrato } from '@/app/context/ExtratoContext';
 
 import { ThemedText } from '../ThemedText';
+import { useCurrencyFormatter } from '@/hooks/useCurrencyFormatter';
 
 const ChartComponent = () => {
   const { totalReceitas, totalDespesas, saldo } = useExtrato();
+  const { formatarValor } = useCurrencyFormatter();
 
   const chartData = [
     {
@@ -56,14 +58,14 @@ const ChartComponent = () => {
           <View style={[styles.legendColor, { backgroundColor: '#47a138' }]} />
 
           <ThemedText type="info" style={styles.legendText}>
-            Receitas: R$ {totalReceitas.toFixed(2)}
+            Receitas: {formatarValor(totalReceitas)}
           </ThemedText>
         </View>
 
         <View style={styles.legendItem}>
           <View style={[styles.legendColor, { backgroundColor: '#d50a0a' }]} />
           <ThemedText type="info" style={styles.legendText}>
-            Gastos: R$ {totalDespesas.toFixed(2)}
+            Gastos: {formatarValor(totalDespesas)}
           </ThemedText>
 
         </View>

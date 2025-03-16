@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { View, Text, Alert, StyleSheet } from "react-native";
+import { View, Text, Alert, StyleSheet, Platform } from "react-native";
 import MaskInput, { createNumberMask } from "react-native-mask-input";
 import { Select } from "@/components/Select";
 import { TransactionType } from "../utils/config";
@@ -9,7 +9,7 @@ import { Button } from "@/components/Button";
 import { CardContainer } from "@/components/CardContainer";
 import extratoFirestore from "@/app/services/extrato-firestore";
 import { useExtrato } from "@/app/context/ExtratoContext";
-
+import { Picker } from '@react-native-picker/picker';
 import { FileUpload, uploadFile } from "../FileUpload";
 
 const formatMonth = () => {
@@ -47,21 +47,24 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
 
   return (
     <CardContainer title="Nova Transação">
-      <Select
-        items={[
-          { value: "deposit", label: "Depósito" },
-          { value: "transfer", label: "Transferência" },
-          { value: "withdraw", label: "Saque" },
-          { value: "payment", label: "Pagamento" },
-          { value: "reversal", label: "Estorno" },
-          { value: "loan", label: "Empréstimo e Financiamento" },
-          { value: "docted", label: "DOC/TED" },
-        ]}
+  <View style={styles.pickerContainer}>
+      <Picker
         selectedValue={selectedTransaction}
         onValueChange={(itemValue) =>
           setSelectedTransaction(itemValue as TransactionType)
         }
-      />
+        mode="dropdown"
+        style={styles.picker}
+      >
+        <Picker.Item label="Depósito" value="deposit" />
+        <Picker.Item label="Transferência" value="transfer" />
+        <Picker.Item label="Saque" value="withdraw" />
+        <Picker.Item label="Pagamento" value="payment" />
+        <Picker.Item label="Estorno" value="reversal" />
+        <Picker.Item label="Empréstimo e Financiamento" value="loan" />
+        <Picker.Item label="DOC/TED" value="docted" />
+      </Picker>
+    </View>
       <View style={[styles.container]}>
         <Text style={[styles.text]}>Valor</Text>
         <MaskInput
@@ -163,5 +166,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: 15,
     maxWidth: "100%",
+  },
+  pickerContainer: {
+    backgroundColor: '#FFF',
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    width: '100%',
+    overflow: 'hidden', 
+  },
+  picker: {
+    width: '100%',
+    color: '#000',
   },
 });
