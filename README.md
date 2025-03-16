@@ -12,21 +12,6 @@ O aplicativo **Financeiro-Tech React Native** foi desenvolvido para oferecer uma
 - [**Expo CLI**](https://docs.expo.dev/get-started/installation/)
 - Um emulador Android ou iOS, ou um dispositivo físico com o aplicativo Expo Go instalado
 
-## Configuração do Firebase
-
-Antes de iniciar o projeto, crie um arquivo **.env** na raiz do projeto e adicione as seguintes variáveis de ambiente:
-
-```env
-EXPO_PUBLIC_API_KEY=
-EXPO_PUBLIC_AUTH_DOMAIN=
-EXPO_PUBLIC_PROJECT_ID=
-EXPO_PUBLIC_STORAGE_BUCKET=
-EXPO_PUBLIC_MESSAGING_SENDER_ID=
-EXPO_PUBLIC_WEB_CLIENT_ID=
-```
-
-Preencha esses campos com as credenciais do seu projeto Firebase.
-
 ## Como executar o projeto
 
 ### 1. Executar localmente
