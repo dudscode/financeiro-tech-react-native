@@ -1,13 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-const firebaseConfig = {
-  // PEGAR CONTEXTO DE NO GRUPO DE WHATS (na descrição do grupo)
-};
+const firebaseConfig = {};
 
 const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 export default db;
-export { auth };
+export { auth, storage };

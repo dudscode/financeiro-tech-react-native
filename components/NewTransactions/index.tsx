@@ -10,6 +10,8 @@ import { CardContainer } from "@/components/CardContainer";
 import extratoFirestore from "@/app/services/extrato-firestore";
 import { useExtrato } from "@/app/context/ExtratoContext";
 
+import { FileUpload } from "../FileUpload";
+
 const formatMonth = () => {
   const data = new Date().toLocaleString("pt-BR", { month: "long" });
   return data.charAt(0).toUpperCase() + data.slice(1);
@@ -72,6 +74,7 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
           mask={mask}
         />
       </View>
+      <FileUpload />
       <Button
         style={styles.button}
         title="Concluir transação"
