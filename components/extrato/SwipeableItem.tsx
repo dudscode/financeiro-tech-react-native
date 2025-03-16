@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Animated, PanResponder, Modal, TouchableWithoutFeedback, View, TouchableOpacity, StyleSheet } from 'react-native';
-import { formatCurrency, transformType } from '../utils/utils';
+import { formatCurrency, transformType, transformValueEdit } from '../utils/utils';
 import { ItemPropsExtrato, TransactionType } from '../utils/config';
 import { ThemedText } from '../ThemedText';
 import { IconSymbol } from '../ui/IconSymbol';
@@ -127,6 +127,7 @@ export default function SwipeableItem({ id, mes, tipo, valor, data, onDelete, on
 
     const handleEditType = (newTipo: TransactionType) => {
         const newItem: ItemPropsExtrato = { id, mes, tipo: newTipo, valor, data };
+        newItem.valor = transformValueEdit(newItem.tipo, newItem.valor);
         setSelectedType(newTipo);
         onEdit(newItem);
         setShowEdit(false);
