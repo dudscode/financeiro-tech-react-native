@@ -1,19 +1,19 @@
-import React, { FC, useState } from "react";
-import { View, Text, Alert, StyleSheet, Platform } from "react-native";
-import MaskInput, { createNumberMask } from "react-native-mask-input";
-import { Select } from "@/components/Select";
-import { TransactionType } from "../utils/config";
-import { transformValue } from "@/components/utils/utils";
+import React, { FC, useState } from 'react';
+import { View, Text, Alert } from 'react-native';
+import MaskInput, { createNumberMask } from 'react-native-mask-input';
+import { TransactionType } from '../utils/config';
+import { transformValue } from '@/components/utils/utils';
 
-import { Button } from "@/components/Button";
-import { CardContainer } from "@/components/CardContainer";
-import extratoFirestore from "@/app/services/extrato-firestore";
-import { useExtrato } from "@/app/context/ExtratoContext";
+import { Button } from '@/components/Button';
+import { CardContainer } from '@/components/CardContainer';
+import extratoFirestore from '@/app/services/extrato-firestore';
+import { useExtrato } from '@/hooks/useExtrato';
 import { Picker } from '@react-native-picker/picker';
-import { FileUpload, uploadFile } from "../FileUpload";
+import { FileUpload, uploadFile } from '../FileUpload';
+import { styles } from './styles';
 
 const formatMonth = () => {
-  const data = new Date().toLocaleString("pt-BR", { month: "long" });
+  const data = new Date().toLocaleString('pt-BR', { month: 'long' });
   return data.charAt(0).toUpperCase() + data.slice(1);
 };
 
@@ -27,44 +27,40 @@ type NewTransactionsProps = {
 };
 
 const mask = createNumberMask({
-  prefix: [""],
-  delimiter: ".",
-  separator: ",",
+  prefix: [''],
+  delimiter: '.',
+  separator: ',',
   precision: 2,
 });
 
 const confirmTransaction = (id: string) => {
-  Alert.alert("Sucesso", "Transação adicionada com sucesso!");
+  Alert.alert('Sucesso', 'Transação adicionada com sucesso!');
 };
 
 export const NewTransactions: FC<NewTransactionsProps> = () => {
   const [file, setUploadFile] = useState<any>();
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<TransactionType>("transfer");
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionType>('transfer');
   const [loading, setLoading] = useState(false);
   const [number, onChangeNumber] = useState<string | undefined>();
   const { saldo, fetchData } = useExtrato();
 
   return (
     <CardContainer title="Nova Transação">
-  <View style={styles.pickerContainer}>
-      <Picker
-        selectedValue={selectedTransaction}
-        onValueChange={(itemValue) =>
-          setSelectedTransaction(itemValue as TransactionType)
-        }
-        mode="dropdown"
-        style={styles.picker}
-      >
-        <Picker.Item label="Depósito" value="deposit" />
-        <Picker.Item label="Transferência" value="transfer" />
-        <Picker.Item label="Saque" value="withdraw" />
-        <Picker.Item label="Pagamento" value="payment" />
-        <Picker.Item label="Estorno" value="reversal" />
-        <Picker.Item label="Empréstimo e Financiamento" value="loan" />
-        <Picker.Item label="DOC/TED" value="docted" />
-      </Picker>
-    </View>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={selectedTransaction}
+          onValueChange={itemValue => setSelectedTransaction(itemValue as TransactionType)}
+          mode="dropdown"
+          style={styles.picker}>
+          <Picker.Item label="Depósito" value="deposit" />
+          <Picker.Item label="Transferência" value="transfer" />
+          <Picker.Item label="Saque" value="withdraw" />
+          <Picker.Item label="Pagamento" value="payment" />
+          <Picker.Item label="Estorno" value="reversal" />
+          <Picker.Item label="Empréstimo e Financiamento" value="loan" />
+          <Picker.Item label="DOC/TED" value="docted" />
+        </Picker>
+      </View>
       <View style={[styles.container]}>
         <Text style={[styles.text]}>Valor</Text>
         <MaskInput
@@ -86,31 +82,27 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
         loading={loading}
         onPress={async () => {
           setLoading(true);
-          const isDespesa = [
-            "payment",
-            "withdraw",
-            "transfer",
-            "loan",
-            "docted",
-          ].includes(selectedTransaction);
+          const isDespesa = ['payment', 'withdraw', 'transfer', 'loan', 'docted'].includes(
+            selectedTransaction
+          );
           const formatNumber = number && parseFloat(number) / 100;
           if (!selectedTransaction) {
-            Alert.alert("Erro", "Selecione uma transação");
+            Alert.alert('Erro', 'Selecione uma transação');
             setLoading(false);
             return false;
           }
           if (!formatNumber || formatNumber <= 0) {
-            Alert.alert("Erro", "Adicione um valor");
+            Alert.alert('Erro', 'Adicione um valor');
             setLoading(false);
             return false;
           }
           if (saldo < 0 && isDespesa) {
-            Alert.alert("Saldo insuficiente");
+            Alert.alert('Saldo insuficiente');
             setLoading(false);
             return false;
           }
           if (formatNumber > saldo && isDespesa) {
-            Alert.alert("Valor maior que o saldo");
+            Alert.alert('Valor maior que o saldo');
             setLoading(false);
             return false;
           }
@@ -125,7 +117,7 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
               id,
             });
             confirmTransaction(id);
-            setSelectedTransaction("transfer");
+            setSelectedTransaction('transfer');
             onChangeNumber(undefined);
             file && uploadFile(file);
             file && setUploadFile(undefined);
@@ -133,7 +125,7 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
             setLoading(false);
           } catch (error) {
             setLoading(false);
-            Alert.alert("Erro", "Não foi possível adicionar a transação.");
+            Alert.alert('Erro', 'Não foi possível adicionar a transação.');
           }
         }}
       />
@@ -142,41 +134,3 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
 };
 
 export default NewTransactions;
-
-const styles = StyleSheet.create({
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 16,
-    width: "100%",
-  },
-  text: { fontSize: 16, fontWeight: "bold", color: "#dee9ea" },
-  button: {
-    backgroundColor: "#004d61",
-    borderRadius: 8,
-    width: "100%",
-    margin: "auto",
-  },
-  searchInput: {
-    backgroundColor: "#fff",
-    borderRadius: 4,
-    minWidth: 100,
-    textAlign: "center",
-    padding: 15,
-    maxWidth: "100%",
-  },
-  pickerContainer: {
-    backgroundColor: '#FFF',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    width: '100%',
-    overflow: 'hidden', 
-  },
-  picker: {
-    width: '100%',
-    color: '#000',
-  },
-});

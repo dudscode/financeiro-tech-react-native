@@ -1,60 +1,24 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  Image,
-} from "react-native";
-import { useCurrencyFormatter } from "../../hooks/useCurrencyFormatter";
-import { useIsTablet } from "../../hooks/useIsTablet";
-import { styles } from "./styles";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useAuth } from "@/context/AuthContext";
-import { router } from "expo-router";
+import React from 'react';
+import { View, Text, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { styles } from './styles';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useCurrencyFormatter } from '@/hooks/useCurrencyFormatter';
+import { useIsTablet } from '@/hooks/useIsTablet';
+import { useBalanceCard } from '@/hooks/useBalanceCard';
+
 interface BalanceCardProps {
   saldo: number;
   loading?: boolean;
 }
 
 export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
-  const [isVisible, setIsVisible] = useState(true);
-  const [currentDate, setCurrentDate] = useState("");
-  const { formatarValor } = useCurrencyFormatter();
+  const { isVisible, currentDate, getUserName, handleLogout, setIsVisible } = useBalanceCard();
   const isTablet = useIsTablet();
-  const { userEmail, signOutUser } = useAuth();
-
-  useEffect(() => {
-    setCurrentDate(formatCurrentDate());
-  }, []);
-
-  function formatCurrentDate() {
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "2-digit",
-      month: "long",
-    };
-    return new Date().toLocaleDateString("pt-BR", options);
-  }
-
-  const getUserName = () => {
-    if (userEmail) {
-      return userEmail.split("@")[0];
-    }
-    return "Usuário";
-  };
-
-  const handleLogout = async () => {
-    await signOutUser();
-    router.replace("/login");
-  };
+  const { formatarValor } = useCurrencyFormatter();
 
   return (
     <View style={[styles.container, isTablet && styles.tabletContainer]}>
-      <TouchableOpacity
-        onPress={handleLogout}
-        style={{ position: "absolute", top: 10, right: 10 }}
-      >
+      <TouchableOpacity onPress={handleLogout} style={{ position: 'absolute', top: 10, right: 10 }}>
         <MaterialIcons name="logout" size={24} color="#fff" />
       </TouchableOpacity>
       <View style={styles.header}>
@@ -69,12 +33,9 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
           <View style={styles.balance}>
             <View style={styles.balanceHeader}>
               <Text style={styles.balanceTitle}>Saldo</Text>
-              <TouchableOpacity
-                onPress={() => setIsVisible(!isVisible)}
-                style={styles.icon}
-              >
+              <TouchableOpacity onPress={() => setIsVisible(!isVisible)} style={styles.icon}>
                 <MaterialIcons
-                  name={isVisible ? "visibility" : "visibility-off"}
+                  name={isVisible ? 'visibility' : 'visibility-off'}
                   size={24}
                   color="#fff"
                 />
@@ -83,24 +44,19 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ saldo, loading }) => {
 
             <View style={styles.balanceLine} />
             <Text style={styles.accountType}>Conta Corrente</Text>
-            <Text style={styles.balanceAmount}>
-              {isVisible ? formatarValor(saldo) : "****"}
-            </Text>
+            <Text style={styles.balanceAmount}>{isVisible ? formatarValor(saldo) : '****'}</Text>
           </View>
         )}
       </View>
 
       <>
+        <Image source={require('../../assets/images/top-mobile.png')} style={styles.imageTopEdge} />
         <Image
-          source={require("../../assets/images/top-mobile.png")}
-          style={styles.imageTopEdge}
-        />
-        <Image
-          source={require("../../assets/images/bottom-mobile.png")}
+          source={require('../../assets/images/bottom-mobile.png')}
           style={styles.imageBottomEdge}
         />
         <Image
-          source={require("../../assets/images/person-with-coin.png")}
+          source={require('../../assets/images/person-with-coin.png')}
           style={styles.imagePerson}
         />
       </>

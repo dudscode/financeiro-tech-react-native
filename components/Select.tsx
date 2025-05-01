@@ -1,6 +1,6 @@
-import React, { FC, useRef } from "react";
-import { Picker } from "@react-native-picker/picker";
-import { StyleSheet } from "react-native";
+import React, { FC, useRef } from 'react';
+import { Picker } from '@react-native-picker/picker';
+import { StyleSheet } from 'react-native';
 
 type Item = {
   label: string;
@@ -20,10 +20,9 @@ export const Select: FC<Props> = ({ items, selectedValue, onValueChange }) => {
     <Picker
       placeholder="Selecione o tipo de transação"
       selectedValue={selectedValue}
-      onValueChange={(itemValue) => onValueChange(itemValue as string)}
+      onValueChange={itemValue => onValueChange(itemValue as string)}
       ref={pickerRef}
-      style={[styles.select]}
-    >
+      style={[styles.select]}>
       {items.map(({ label, value }) => (
         <Picker.Item key={value} label={label} value={value} />
       ))}
@@ -33,13 +32,13 @@ export const Select: FC<Props> = ({ items, selectedValue, onValueChange }) => {
 
 const styles = StyleSheet.create({
   select: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 8,
-    width: "100%",
+    width: '100%',
     height: 50,
     padding: 10,
-    borderColor: "#004d61",
+    borderColor: '#004d61',
     borderWidth: 1,
-    borderStyle: "solid",
+    borderStyle: 'solid',
   },
 });

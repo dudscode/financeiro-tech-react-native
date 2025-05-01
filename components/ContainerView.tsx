@@ -4,19 +4,16 @@ import Animated, { useAnimatedRef, useScrollViewOffset } from 'react-native-rean
 import { useBottomTabOverflow } from '@/components/ui/TabBarBackground';
 const HEADER_HEIGHT = 0;
 
-export default function ContainerView({
-  children
-}: any) {
+export default function ContainerView({ children }: any) {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const bottom = useBottomTabOverflow();
   return (
-    <ThemedView style={styles.container} >
+    <ThemedView style={styles.container}>
       <Animated.ScrollView
-       ref={scrollRef}
-       scrollEventThrottle={16}
-       scrollIndicatorInsets={{ bottom }}
-       contentContainerStyle={{ paddingBottom: bottom }}>
-
+        ref={scrollRef}
+        scrollEventThrottle={16}
+        scrollIndicatorInsets={{ bottom }}
+        contentContainerStyle={{ paddingBottom: bottom }}>
         <ThemedView style={styles.content}>{children}</ThemedView>
       </Animated.ScrollView>
     </ThemedView>
