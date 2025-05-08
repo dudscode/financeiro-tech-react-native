@@ -5,7 +5,15 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'primary' | 'info' | 'erro';
+  type?:
+    | 'default'
+    | 'title'
+    | 'defaultSemiBold'
+    | 'subtitle'
+    | 'link'
+    | 'primary'
+    | 'info'
+    | 'erro';
 };
 
 export function ThemedText({
@@ -60,20 +68,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a7ea4',
   },
-  primary:{
+  primary: {
     color: '#47A138',
     fontWeight: 'bold',
-    fontSize: 20
+    fontSize: 20,
   },
-  info:{
+  info: {
     color: '#9d9d9d',
     fontWeight: 'bold',
-    fontSize: 20
+    fontSize: 20,
   },
-  erro:{
+  erro: {
     color: '#d50a0a',
     fontWeight: 'bold',
-    fontSize: 20
+    fontSize: 20,
   },
-
 });

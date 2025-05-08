@@ -1,66 +1,24 @@
-import React from "react";
-import { Alert, Platform } from "react-native";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useRouter } from "expo-router";
-import * as S from "./styles";
-import { useAuth } from "@/context/AuthContext";
-import FloatingLabelInput from "@/components/ui/FloatingLabelInput";
-
-const schema = yup.object().shape({
-  name: yup.string().required("Nome é obrigatório"),
-  email: yup.string().email("Email inválido").required("Email obrigatório"),
-  password: yup
-    .string()
-    .min(6, "A senha deve ter pelo menos 6 caracteres")
-    .required("Senha obrigatória"),
-});
-
-type FormData = {
-  name: string;
-  email: string;
-  password: string;
-};
+import React from 'react';
+import { Platform } from 'react-native';
+import { Controller } from 'react-hook-form';
+import * as S from './styles';
+import FloatingLabelInput from '@/components/ui/FloatingLabelInput';
+import { useSignup } from '@/hooks/useSignup';
 
 const SignUp = () => {
-  const { signUp } = useAuth();
-  const router = useRouter();
-
-  const { control, handleSubmit } = useForm<FormData>({
-    resolver: yupResolver(schema),
-  });
-
-  const onSubmit = async (data: FormData) => {
-    try {
-      await signUp(data.name, data.email, data.password);
-      console.log("Cadastro realizado com sucesso!", data);
-      Alert.alert("Sucesso", "Cadastro realizado com sucesso!");
-      router.replace("/(tabs)");
-    } catch (error: any) {
-      Alert.alert("Erro", error.message || "Erro ao realizar cadastro");
-    }
-  };
-
-  const handleLogin = () => {
-    router.replace("/login");
-  };
+  const { control, handleSubmit, onSubmit, handleLogin } = useSignup();
 
   return (
     <S.Container
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-    >
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}>
       <S.Title>Cadastro</S.Title>
 
       <Controller
         control={control}
         name="name"
         defaultValue=""
-        render={({
-          field: { onChange, onBlur, value },
-          fieldState: { error },
-        }) => (
+        render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
           <>
             <FloatingLabelInput
               label="Nome"
@@ -78,10 +36,7 @@ const SignUp = () => {
         control={control}
         name="email"
         defaultValue=""
-        render={({
-          field: { onChange, onBlur, value },
-          fieldState: { error },
-        }) => (
+        render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
           <>
             <FloatingLabelInput
               label="Email"
@@ -101,10 +56,7 @@ const SignUp = () => {
         control={control}
         name="password"
         defaultValue=""
-        render={({
-          field: { onChange, onBlur, value },
-          fieldState: { error },
-        }) => (
+        render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
           <>
             <FloatingLabelInput
               label="Senha"

@@ -1,51 +1,12 @@
-import React, { useEffect } from 'react';
-import { Alert, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { useAuth } from '@/context/AuthContext';
+import React from 'react';
+import { Platform } from 'react-native';
+import { Controller } from 'react-hook-form';
 import FloatingLabelInput from '@/components/ui/FloatingLabelInput';
 import * as S from './styles';
-const schema = yup.object().shape({
-  email: yup.string().email('Email inválido').required('Email obrigatório'),
-  password: yup
-    .string()
-    .min(6, 'A senha deve ter pelo menos 6 caracteres')
-    .required('Senha obrigatória'),
-});
-
-type FormData = {
-  email: string;
-  password: string;
-};
+import { useLogin } from '@/hooks/useLogin';
 
 const Login = () => {
-  const { isAuthenticated, signIn } = useAuth();
-
-  const router = useRouter();
-  const { control, handleSubmit } = useForm<FormData>({
-    resolver: yupResolver(schema),
-  });
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.replace('/(tabs)');
-    }
-  }, [isAuthenticated, router]);
-
-  const onSubmit = async (data: FormData) => {
-    try {
-      await signIn(data.email, data.password);
-      console.log('Login realizado com sucesso!', data);
-      router.replace('/(tabs)');
-    } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao fazer login');
-    }
-  };
-
-  const handleSignUp = () => {
-    router.replace('/signup');
-  };
+  const { control, handleSubmit, onSubmit, handleSignUp } = useLogin();
 
   return (
     <S.Container

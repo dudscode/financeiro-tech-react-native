@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
-import { useExtrato } from '@/app/context/ExtratoContext';
+import { useExtrato } from '@/hooks/useExtrato';
 
 import { ThemedText } from '../ThemedText';
 import { useCurrencyFormatter } from '@/hooks/useCurrencyFormatter';
@@ -20,7 +20,7 @@ const ChartComponent = () => {
       name: 'Gastos',
       population: Math.abs(totalDespesas),
       color: '#d50a0a',
-    }
+    },
   ];
   if (!totalDespesas && !totalReceitas && !saldo) {
     return (
@@ -29,7 +29,7 @@ const ChartComponent = () => {
           Sem transações
         </ThemedText>
       </View>
-    )
+    );
   }
   return (
     <View style={styles.container}>
@@ -42,16 +42,13 @@ const ChartComponent = () => {
           backgroundGradientFrom: '#fff',
           backgroundGradientTo: '#fff',
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-
         }}
         accessor="population"
         hasLegend={false}
         backgroundColor="transparent"
         paddingLeft="0"
         center={[80, 30]}
-
       />
-
 
       <View style={styles.legendContainer}>
         <View style={styles.legendItem}>
@@ -67,20 +64,16 @@ const ChartComponent = () => {
           <ThemedText type="info" style={styles.legendText}>
             Gastos: {formatarValor(totalDespesas)}
           </ThemedText>
-
         </View>
-
-
       </View>
     </View>
-
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   legendContainer: {
     display: 'flex',

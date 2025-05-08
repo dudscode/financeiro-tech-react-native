@@ -1,39 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import ContainerView from "@/components/ContainerView";
-import { ThemedText } from "@/components/ThemedText";
-import { BalanceCard } from "@/components/BalanceCard";
+import ContainerView from '@/components/ContainerView';
+import { ThemedText } from '@/components/ThemedText';
+import { BalanceCard } from '@/components/BalanceCard';
 
-import { useExtrato } from "../context/ExtratoContext";
-import ChartComponent from "@/components/chart-invest/chartComponent";
+import { useExtrato } from '@/hooks/useExtrato';
+import ChartComponent from '@/components/chart-invest/chartComponent';
 
 export default function HomeScreen() {
-  const { saldo, fetchData } = useExtrato();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await fetchData();
-      setLoading(false);
-    };
-
-    loadData();
-  }, []);
-
-  if (loading) {
-    return (
-      <ContainerView>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </ContainerView>
-    );
-  }
+  const { saldo } = useExtrato();
 
   return (
     <ContainerView>
       <View style={styles.titleContainer}>
-        <BalanceCard saldo={saldo} loading={loading} />
+        <BalanceCard saldo={saldo} loading={false} />
       </View>
       <View style={styles.chartContainer}>
         <ThemedText type="title" style={styles.titleChart}>
@@ -47,9 +28,9 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    color: "white",
-    flexDirection: "row",
-    alignItems: "center",
+    color: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
     marginTop: 60,
   },
@@ -62,16 +43,16 @@ const styles = StyleSheet.create({
     width: 290,
     bottom: 0,
     left: 0,
-    position: "absolute",
+    position: 'absolute',
   },
   summaryContainer: {
-    flexDirection: "column",
-    justifyContent: "space-between",
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     marginVertical: 10,
     paddingHorizontal: 16,
   },
   chartContainer: {
-    flexDirection: "column",
+    flexDirection: 'column',
     marginTop: 10,
   },
   titleChart: {
