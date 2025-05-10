@@ -7,7 +7,6 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
 interface AuthContextData {
   isAuthenticated: boolean;
   userEmail: string | null;
