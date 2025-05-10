@@ -19,6 +19,7 @@ const MAPPING = {
   pencil: 'edit',
   money: 'money',
   'dollarsign.circle': 'money',
+  'arrow.down.doc': 'file-download',
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

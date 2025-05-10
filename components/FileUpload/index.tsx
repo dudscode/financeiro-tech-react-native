@@ -4,24 +4,23 @@ import { ref, uploadBytes } from "firebase/storage";
 import { storage, auth } from "@/app/firebase/config";
 import { Button } from "@/components/Button";
 
-export const uploadFile = async (file: DocumentPicker.DocumentPickerAsset) => {
 
-  // Convertendo o arquivo para Blob
-  const response = await fetch(file.uri);
-  const blob = await response.blob();
+export const uploadFile = async (file: DocumentPicker.DocumentPickerAsset): Promise<string | null> => {
+  try {
+    const response = await fetch(file.uri);
+    const blob = await response.blob();
 
-  const storageRef = ref(
-    storage,
-    `images/users/${auth.currentUser?.uid}/${file?.name}`
-  );
+    const storagePath = `images/users/${auth.currentUser?.uid}/${file.name}`;
+    const storageRef = ref(storage, storagePath);
 
-  uploadBytes(storageRef, blob)
-    .then((snapshot) => {
-      console.log("Arquivo enviado com sucesso!")
-    })
-    .catch((error) => {
-      Alert.alert("Erro", "Erro ao enviar arquivo.");
-    });
+    await uploadBytes(storageRef, blob);
+
+    console.log("Arquivo enviado com sucesso!");
+    return storagePath;
+  } catch (error) {
+    Alert.alert("Erro", "Erro ao enviar arquivo.");
+    return null;
+  }
 };
 
 type FileUploadProps = {
