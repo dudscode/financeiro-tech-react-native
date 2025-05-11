@@ -57,7 +57,6 @@ export const ExtratoProvider: React.FC<{ children: ReactNode }> = ({ children })
             getItem('saldo'),
           ])
             .then(values => {
-              console.log('values: ', values);
               const [extrato, totalReceitas, totalDespesas, saldo] = values;
               if (extrato) {
                 setData(JSON.parse(extrato));
