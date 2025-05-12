@@ -47,7 +47,6 @@ export const useTransactions = () => {
   };
 
   const handleProcessTransaction = async () => {
-    console.log('akii');
     const isDespesa = despesaType.includes(selectedTransaction);
     const formatNumber = number && parseFloat(number) / 100;
     if (!selectedTransaction) {
@@ -90,7 +89,6 @@ export const useTransactions = () => {
       fetchData();
       setLoading(false);
     } catch (error) {
-      console.log('error: ', error);
       setLoading(false);
       Alert.alert('Erro', 'Não foi possível adicionar a transação.');
     }

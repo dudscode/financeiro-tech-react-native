@@ -1,17 +1,31 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CryptoJS from 'react-native-crypto-js';
 
 export const setItem = async (key: string, value: unknown) => {
+  if (!process.env.EXPO_PUBLIC_KEY) {
+    throw new Error('Encryption key is not defined in environment variables');
+  }
+
   try {
-    await AsyncStorage.setItem(key, JSON.stringify(value));
+    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    const ciphertext = CryptoJS.AES.encrypt(stringValue, process.env.EXPO_PUBLIC_KEY).toString();
+    await AsyncStorage.setItem(key, JSON.stringify(ciphertext));
   } catch (error) {
     console.error('Error setting item:', error);
   }
 };
 
 export const getItem = async (key: string) => {
+  if (!process.env.EXPO_PUBLIC_KEY) {
+    throw new Error('Encryption key is not defined in environment variables');
+  }
   try {
-    const value = await AsyncStorage.getItem(key);
-    return value != null ? JSON.parse(value) : null;
+    const ciphertext = (await AsyncStorage.getItem(key)) || '';
+    const decryptedValue = CryptoJS.AES.decrypt(
+      JSON.parse(ciphertext),
+      process.env.EXPO_PUBLIC_KEY
+    );
+    return decryptedValue !== null ? JSON.parse(decryptedValue.toString(CryptoJS.enc.Utf8)) : null;
   } catch (error) {
     console.error('Error getting item:', error);
     return null;

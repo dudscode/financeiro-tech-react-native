@@ -47,7 +47,7 @@ export const ExtratoProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     checkConnection()
-      .then(isConnected => {
+      .then(async isConnected => {
         if (!isConnected) {
           console.log('No internet connection');
           Promise.all([
@@ -59,7 +59,7 @@ export const ExtratoProvider: React.FC<{ children: ReactNode }> = ({ children })
             .then(values => {
               const [extrato, totalReceitas, totalDespesas, saldo] = values;
               if (extrato) {
-                setData(JSON.parse(extrato));
+                setData(extrato);
               }
               if (totalReceitas) {
                 setTotalReceitas(Number(totalReceitas));
