@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 import MaskInput, { createNumberMask } from 'react-native-mask-input';
 import { TransactionType } from '../utils/config';
