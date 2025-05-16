@@ -1,7 +1,7 @@
 import { View, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import { ref, uploadBytes } from "firebase/storage";
-import { storage, auth } from "@/app/firebase/config";
+import { storage, auth } from "@/infra/firebase/config";
 import { Button } from "@/components/Button";
 
 export const uploadFile = async (file: DocumentPicker.DocumentPickerAsset) => {
