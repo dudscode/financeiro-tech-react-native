@@ -3,7 +3,7 @@ import { ExtratoContext } from '@/app/context/ExtratoContext';
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import { ItemPropsExtrato } from '@/components/utils/config';
-import extratoFirestore from '@/app/services/extrato-firestore';
+import extratoFirestore from '@/infra/firebase/services/extrato-firestore';
 import { Alert } from 'react-native';
 import { ExtratoContextType } from '@/app/context/ExtratoContext';
 export const useExtrato = () => {
