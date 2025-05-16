@@ -6,11 +6,11 @@ import { transformValue } from '@/components/utils/utils';
 
 import { Button } from '@/components/Button';
 import { CardContainer } from '@/components/CardContainer';
-import extratoFirestore from '@/infra/firebase/services/extrato-firestore';
 import { useExtrato } from '@/hooks/useExtrato';
 import { Picker } from '@react-native-picker/picker';
 import { FileUpload, uploadFile } from '../FileUpload';
 import { styles } from './styles';
+import extratoFirestore from '@/app/services/extrato-firestore';
 
 const formatMonth = () => {
   const data = new Date().toLocaleString('pt-BR', { month: 'long' });
