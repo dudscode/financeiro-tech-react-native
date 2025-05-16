@@ -109,12 +109,18 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
 
           try {
             const id = new Date().getTime().toString();
+            let imagePath = null;
+            if (file) {
+              imagePath = await uploadFile(file);
+            }
+
             await extratoFirestore.addTransaction({
               mes: formatMonth(),
               data: new Date().toLocaleDateString(),
               tipo: selectedTransaction,
               valor: transformValue(selectedTransaction, formatNumber),
               id,
+              imagePath
             });
             confirmTransaction(id);
             setSelectedTransaction('transfer');

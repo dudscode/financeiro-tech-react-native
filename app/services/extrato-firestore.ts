@@ -1,13 +1,15 @@
 import { ItemPropsExtrato } from "@/components/utils/config";
 import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, query, orderBy, where, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import db from "@/infra/firebase/config";
+import db, { storage } from "@/infra/firebase/config";
+import { getDownloadURL, ref } from "firebase/storage";
+import * as Linking from "expo-linking"; // para abrir no navegador
 
 
 const addTransaction = async (transaction: ItemPropsExtrato) => {
   const auth = getAuth();
   const user = auth.currentUser;
-
+  
   if (!user) {
     console.warn("Usuário não autenticado. Não é possível adicionar transação.");
     return;
@@ -51,6 +53,7 @@ const getTransactions = async (): Promise<ItemPropsExtrato[]> => {
         tipo: data.tipo,
         data: data.data,
         valor: data.valor,
+        imagePath: data.imagePath || null,
       };
     });
 
@@ -117,11 +120,22 @@ const updateTransaction = async (id: string, updatedData: ItemPropsExtrato) => {
     throw error;
   }
 };
+
+const downloadImage = async (imagePath: string) => {
+  try {
+    const storageRef = ref(storage, imagePath);
+    const url = await getDownloadURL(storageRef);
+    Linking.openURL(url);
+  } catch (error) {
+    console.error("Erro ao fazer download da imagem:", error);
+  }
+};
 const extratoFirestore = {
   addTransaction,
   getTransactions,
   deleteTransaction,
   updateTransaction,
+  downloadImage
 };
 
 export default extratoFirestore;

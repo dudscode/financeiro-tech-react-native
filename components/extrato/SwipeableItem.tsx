@@ -14,6 +14,7 @@ import { IconSymbol } from '../ui/IconSymbol';
 import { ThemedView } from '../ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { styles } from './styles';
+import extratoFirestore from '@/app/services/extrato-firestore';
 
 interface SwipeableItemProps {
   id: string;
@@ -21,6 +22,7 @@ interface SwipeableItemProps {
   tipo: TransactionType;
   valor: number;
   data: string;
+  imagePath?: string | null;
   onDelete: (id: string) => void;
   onEdit: (newItem: ItemPropsExtrato) => void;
   resetSwipe: any;
@@ -32,6 +34,7 @@ export default function SwipeableItem({
   tipo,
   valor,
   data,
+  imagePath,
   onDelete,
   onEdit,
   resetSwipe,
@@ -151,8 +154,16 @@ export default function SwipeableItem({
             <ThemedText type="subtitle">{transformType(tipo)}</ThemedText>
             <ThemedText type="info">{data}</ThemedText>
           </View>
+          <View style={styles.valorEicone}>
           <ThemedText type="subtitle">{formatCurrency(valor)}</ThemedText>
-          <View style={styles.divider}></View>
+
+          {imagePath && (
+             <TouchableOpacity onPress={() => extratoFirestore.downloadImage(imagePath)}>
+             <IconSymbol name="arrow.down.doc" size={30} color={iconColor} />
+           </TouchableOpacity>
+          )}
+          </View>
+          <View style={styles.divider} />
         </View>
       </Animated.View>
       {showOptions && renderDeleteButton()}

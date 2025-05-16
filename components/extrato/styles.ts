@@ -94,4 +94,12 @@ export const styles = StyleSheet.create({
     alignContent: 'flex-end',
     flexWrap: 'wrap',
   },
+  valorEicone:{
+    marginTop: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    width: '90%',
+  }
 });

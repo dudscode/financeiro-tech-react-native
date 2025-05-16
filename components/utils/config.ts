@@ -4,5 +4,6 @@ export type ItemPropsExtrato = {
     data: string
     tipo: TransactionType
     valor: number
-    id: string
+    id: string,
+    imagePath?: string | null
 };
