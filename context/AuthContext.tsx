@@ -5,6 +5,8 @@ import { LogoutUseCase } from '@/domain/useCases/auth/LogoutUseCase';
 import { LoginUseCase } from '@/domain/useCases/auth/LoginUseCase';
 import { ObserveAuthStateUseCase } from '@/domain/useCases/auth/ObserveAuthStateUseCase';
 
+import { checkConnection } from '@/app/utils/network';
+import { setItem, getItem } from '@/app/utils/async-storage';
 interface AuthContextData {
   isAuthenticated: boolean;
   userEmail: string | null;
@@ -36,6 +38,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      const isConnected = await checkConnection();
+      if (!isConnected) {
+        const auth = await getItem('auth');
+        if (auth) {
+          const { email: storedEmail, password: storedPassword } = auth;
+          // await signInWithEmailAndPassword(auth, storedEmail, storedPassword);
+          setIsAuthenticated(true);
+          return;
+        }
+        return;
+      }
+      setItem('auth', { email, password });
       await loginUseCase.execute({ email, password });
 
       setIsAuthenticated(true);
