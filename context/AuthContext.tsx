@@ -7,7 +7,8 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
+import { checkConnection } from '@/app/utils/network';
+import { setItem, getItem } from '@/app/utils/async-storage';
 interface AuthContextData {
   isAuthenticated: boolean;
   userEmail: string | null;
@@ -32,6 +33,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
+      const isConnected = await checkConnection();
+      if (!isConnected) {
+        const auth = await getItem('auth');
+        if (auth) {
+          const { email: storedEmail, password: storedPassword } = auth;
+          // await signInWithEmailAndPassword(auth, storedEmail, storedPassword);
+          setIsAuthenticated(true);
+          return;
+        }
+        return;
+      }
+      setItem('auth', { email, password });
       await signInWithEmailAndPassword(auth, email, password);
       setIsAuthenticated(true);
     } catch (error: any) {

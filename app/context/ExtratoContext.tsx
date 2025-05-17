@@ -1,6 +1,9 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { ItemPropsExtrato } from '@/components/utils/config';
 import extratoFirestore from '../services/extrato-firestore';
+import { mountReceitas, mountDespesas, mountSaldo } from '../services/extrato';
+import { checkConnection } from '@/app/utils/network';
+import { setItem, getItem } from '@/app/utils/async-storage';
 
 export interface ExtratoContextType {
   data: ItemPropsExtrato[];
@@ -24,25 +27,61 @@ export const ExtratoProvider: React.FC<{ children: ReactNode }> = ({ children })
       const transactions = await extratoFirestore.getTransactions();
       setData(transactions);
 
-      const receitas = transactions
-        .filter(item => item.tipo === 'deposit' || item.tipo === 'reversal')
-        .reduce((sum, item) => sum + item.valor, 0);
-
-      const despesas = transactions
-        .filter(item => ['payment', 'withdraw', 'transfer', 'loan', 'docted'].includes(item.tipo))
-        .reduce((sum, item) => sum + item.valor, 0);
-
+      const receitas = mountReceitas(transactions);
       setTotalReceitas(receitas);
+
+      const despesas = mountDespesas(transactions);
       setTotalDespesas(despesas);
-      const despesasCorrigidas = Math.abs(despesas);
-      setSaldo(receitas - despesasCorrigidas);
+
+      const saldoCalc = mountSaldo(despesas, receitas);
+      setSaldo(saldoCalc);
+
+      setItem('extrato', JSON.stringify(transactions));
+      setItem('totalReceitas', JSON.stringify(receitas));
+      setItem('totalDespesas', JSON.stringify(despesas));
+      setItem('saldo', JSON.stringify(saldoCalc));
     } catch (error) {
       console.error('Erro ao buscar transações:', error);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    checkConnection()
+      .then(async isConnected => {
+        if (!isConnected) {
+          console.log('No internet connection');
+          Promise.all([
+            getItem('extrato'),
+            getItem('totalReceitas'),
+            getItem('totalDespesas'),
+            getItem('saldo'),
+          ])
+            .then(values => {
+              const [extrato, totalReceitas, totalDespesas, saldo] = values;
+              if (extrato) {
+                setData(extrato);
+              }
+              if (totalReceitas) {
+                setTotalReceitas(Number(totalReceitas));
+              }
+              if (totalDespesas) {
+                setTotalDespesas(Number(totalDespesas));
+              }
+              if (saldo) {
+                setSaldo(Number(saldo));
+              }
+            })
+            .catch(error => {
+              console.error('Error retrieving cached data:', error);
+            });
+          return;
+        }
+        console.log('Internet connection established');
+        fetchData();
+      })
+      .catch(error => {
+        console.error('Error fetching connection state:', error);
+      });
   }, []);
 
   return (
