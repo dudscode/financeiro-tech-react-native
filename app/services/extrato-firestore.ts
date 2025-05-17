@@ -1,10 +1,9 @@
 import { ItemPropsExtrato } from "@/components/utils/config";
-import db from "../firebase/config";
 import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, query, orderBy, where, getDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import db, { storage } from "@/infra/firebase/config";
 import { getDownloadURL, ref } from "firebase/storage";
 import * as Linking from "expo-linking"; // para abrir no navegador
-import { storage } from "@/app/firebase/config";
 
 
 const addTransaction = async (transaction: ItemPropsExtrato) => {

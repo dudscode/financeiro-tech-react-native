@@ -5,7 +5,8 @@ import { TransactionType } from '../utils/config';
 
 import { Button } from '@/components/Button';
 import { CardContainer } from '@/components/CardContainer';
-
+import extratoFirestore from '@/app/services/extrato-firestore';
+import { useExtrato } from '@/hooks/useExtrato';
 import { Picker } from '@react-native-picker/picker';
 import { FileUpload } from '@/components/FileUpload';
 import { styles } from './styles';

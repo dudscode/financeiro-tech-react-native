@@ -1,12 +1,10 @@
-import db, { auth } from '@/app/firebase/config';
-import {
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { AuthFirebaseRepository } from '@/infra/firebase/AuthFirebaseRepository';
+import { RegisterUseCase } from '@/domain/useCases/auth/RegisterUseCase';
+import { LogoutUseCase } from '@/domain/useCases/auth/LogoutUseCase';
+import { LoginUseCase } from '@/domain/useCases/auth/LoginUseCase';
+import { ObserveAuthStateUseCase } from '@/domain/useCases/auth/ObserveAuthStateUseCase';
+
 import { checkConnection } from '@/app/utils/network';
 import { setItem, getItem } from '@/app/utils/async-storage';
 interface AuthContextData {
@@ -17,6 +15,13 @@ interface AuthContextData {
   signOutUser: () => Promise<void>;
 }
 
+const authRepository = new AuthFirebaseRepository();
+
+const loginUseCase = new LoginUseCase(authRepository);
+const registerUseCase = new RegisterUseCase(authRepository);
+const logoutUseCase = new LogoutUseCase(authRepository);
+const observeAuthStateUseCase = new ObserveAuthStateUseCase(authRepository);
+
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -24,9 +29,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, user => {
+    const unsubscribe = observeAuthStateUseCase.execute(user => {
       setIsAuthenticated(!!user);
-      setUserEmail(user?.email || null);
+      setUserEmail(user?.email ?? null);
     });
     return unsubscribe;
   }, []);
@@ -45,7 +50,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       setItem('auth', { email, password });
-      await signInWithEmailAndPassword(auth, email, password);
+      await loginUseCase.execute({ email, password });
+
       setIsAuthenticated(true);
     } catch (error: any) {
       console.error('Erro ao fazer login', error);
@@ -55,14 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (name: string, email: string, password: string) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      await setDoc(doc(db, 'users', user.uid), {
-        name,
-        email,
-        userId: user.uid,
-      });
+      const user = await registerUseCase.execute({ email, password, displayName: name });
 
       setIsAuthenticated(true);
     } catch (error: any) {
@@ -73,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOutUser = async () => {
     try {
-      await signOut(auth);
+      await logoutUseCase.execute();
       setIsAuthenticated(false);
       setUserEmail(null);
     } catch (error: any) {
@@ -82,11 +81,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, userEmail, signIn, signUp, signOutUser }}>
-      {children}
-    </AuthContext.Provider>
+  const contextValue = React.useMemo(
+    () => ({ isAuthenticated, userEmail, signIn, signUp, signOutUser }),
+    [isAuthenticated, userEmail, signIn, signUp, signOutUser]
   );
+
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);

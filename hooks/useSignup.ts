@@ -35,7 +35,7 @@ export const useSignup = () => {
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao realizar cadastro');
+      Alert.alert('Erro', error.message ?? 'Erro ao realizar cadastro');
     }
   };
 
