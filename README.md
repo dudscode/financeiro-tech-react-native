@@ -23,6 +23,7 @@ EXPO_PUBLIC_PROJECT_ID=
 EXPO_PUBLIC_STORAGE_BUCKET=
 EXPO_PUBLIC_MESSAGING_SENDER_ID=
 EXPO_PUBLIC_WEB_CLIENT_ID=
+EXPO_PUBLIC_KEY=
 ```
 
 Nossas configuracões do firebase se encontra no pdf da entrega
@@ -104,6 +105,7 @@ Nossas configuracões do firebase se encontra no pdf da entrega
 - [**Firebase**](https://firebase.google.com/) (11.4.0): Autenticação e banco de dados em tempo real.
 - [**React Hook Form**](https://react-hook-form.com/) (7.54.2): Gerenciamento eficiente de formulários.
 - [**Styled Components**](https://styled-components.com/) (6.1.15): Estilização de componentes.
+- [**Context API**](https://react.dev/learn/passing-data-deeply-with-context): Gerenciamento de estado
 - Outras bibliotecas: Axios, Yup, e diversas bibliotecas do ecossistema Expo para funcionalidades como fontes, ícones, haptics e mais.
 
 ---
