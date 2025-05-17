@@ -42,8 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!isConnected) {
         const auth = await getItem('auth');
         if (auth) {
-          const { email: storedEmail, password: storedPassword } = auth;
-          // await signInWithEmailAndPassword(auth, storedEmail, storedPassword);
+          setUserEmail(auth.email ?? null);
           setIsAuthenticated(true);
           return;
         }
@@ -61,7 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (name: string, email: string, password: string) => {
     try {
-      const user = await registerUseCase.execute({ email, password, displayName: name });
+      await registerUseCase.execute({ email, password, displayName: name });
 
       setIsAuthenticated(true);
     } catch (error: any) {
