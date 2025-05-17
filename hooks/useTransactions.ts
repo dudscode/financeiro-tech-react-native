@@ -37,7 +37,7 @@ export const useTransactions = () => {
       Alert.alert('Erro', 'Transação desabilitada, por favor, verifique sua conexão.');
       return;
     }
-    handleProcessTransaction();
+    // handleProcessTransaction();
   }, [isConnected]);
 
   const onPress = async () => {
