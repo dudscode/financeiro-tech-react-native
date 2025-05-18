@@ -1,27 +1,7 @@
 import { View, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
-import { ref, uploadBytes } from "firebase/storage";
-import { storage, auth } from "@/infra/firebase/config";
 import { Button } from "@/components/Button";
-
-
-export const uploadFile = async (file: DocumentPicker.DocumentPickerAsset): Promise<string | null> => {
-  try {
-    const response = await fetch(file.uri);
-    const blob = await response.blob();
-
-    const storagePath = `images/users/${auth.currentUser?.uid}/${file.name}`;
-    const storageRef = ref(storage, storagePath);
-
-    await uploadBytes(storageRef, blob);
-
-    console.log("Arquivo enviado com sucesso!");
-    return storagePath;
-  } catch (error) {
-    Alert.alert("Erro", "Erro ao enviar arquivo.");
-    return null;
-  }
-};
+import React from "react";
 
 type FileUploadProps = {
   callback: (file: DocumentPicker.DocumentPickerAsset) => void;

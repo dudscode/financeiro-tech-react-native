@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
-import extratoFirestore from '@/app/services/extrato-firestore';
 import { useExtrato } from '@/hooks/useExtrato';
-import { transformValue } from '@/components/utils/utils';
-import { uploadFile } from '@/components/FileUpload';
-import { TransactionType } from '@/components/utils/config';
-import { formatMonth } from '@/components/utils/utils';
+import { transformValue, formatMonth } from '@/components/utils/utils';
+import { TransactionType } from '@/domain/entities/Extrato';
 import { checkConnection } from '@/app/utils/network';
+import { ExtratoFirebaseRepository } from '@/infra/firebase/ExtratoFirebaseRepository';
+import { DownloadImageUseCase } from '@/domain/useCases/extrato/DownloadImageUseCase';
+import * as Linking from 'expo-linking'; // para abrir no navegador
+import { UploadFileUseCase } from '@/domain/useCases/extrato/UploadFileUseCase';
+import { CreateTransactionUseCase } from '@/domain/useCases/extrato/CreateTransactionUseCase';
 
 const confirmTransaction = () => {
   Alert.alert('Sucesso', 'Transação adicionada com sucesso!');
@@ -20,13 +22,12 @@ export const useTransactions = () => {
   const [loading, setLoading] = useState(false);
   const { saldo, fetchData } = useExtrato();
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionType>('transfer');
-
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
 
-  const fetchConnectionStatus = async () => {
-    const connectionStatus = await checkConnection();
-    setIsConnected(connectionStatus);
-  };
+  const ExtratoRepository = new ExtratoFirebaseRepository();
+  const downloadImageUseCase = new DownloadImageUseCase(ExtratoRepository);
+  const uploadFileUseCase = new UploadFileUseCase(ExtratoRepository);
+  const createTransactionUseCase = new CreateTransactionUseCase(ExtratoRepository);
 
   useEffect(() => {
     fetchConnectionStatus();
@@ -35,7 +36,6 @@ export const useTransactions = () => {
   useEffect(() => {
     if (isConnected === false) {
       Alert.alert('Erro', 'Transação desabilitada, por favor, verifique sua conexão.');
-      return;
     }
     // handleProcessTransaction();
   }, [isConnected]);
@@ -44,6 +44,11 @@ export const useTransactions = () => {
     fetchConnectionStatus();
     handleProcessTransaction();
     setLoading(true);
+  };
+
+  const fetchConnectionStatus = async () => {
+    const connectionStatus = await checkConnection();
+    setIsConnected(connectionStatus);
   };
 
   const handleProcessTransaction = async () => {
@@ -72,25 +77,57 @@ export const useTransactions = () => {
 
     try {
       const id = new Date().getTime().toString();
+      let imagePath = null;
 
-      await extratoFirestore.addTransaction({
+      if (file) {
+        imagePath = await uploadFileUseCase.execute(file);
+        if (!imagePath) {
+          return Alert.alert('Aviso', 'O upload do comprovante falhou. Deseja tentar novamente?', [
+            { text: 'Cancelar', style: 'cancel' },
+            { text: 'Tentar Novamente', onPress: () => handleProcessTransaction() },
+          ]);
+        }
+      }
+
+      await createTransactionUseCase.execute({
         mes: formatMonth(),
         data: new Date().toLocaleDateString(),
         tipo: selectedTransaction,
         valor: transformValue(selectedTransaction, formatNumber),
         id,
-        imagePath: file ? await uploadFile(file) : null,
+        imagePath,
       });
+
       confirmTransaction();
       setSelectedTransaction('transfer');
       onChangeNumber(undefined);
-      file && uploadFile(file);
-      file && setUploadFile(undefined);
+
+      if (file) {
+        setUploadFile(undefined);
+      }
+
       fetchData();
       setLoading(false);
     } catch (error) {
       setLoading(false);
       Alert.alert('Erro', 'Não foi possível adicionar a transação.');
+    }
+  };
+
+  const downloadTransactionImage = async (imagePath: string) => {
+    try {
+      if (!imagePath) {
+        Alert.alert('Erro', 'Caminho da imagem não fornecido.');
+        return;
+      }
+      const imageUrl = await downloadImageUseCase.execute(imagePath);
+      if (imageUrl) Linking.openURL(imageUrl);
+    } catch (error) {
+      console.error('Error downloading transaction image:', error);
+      Alert.alert(
+        'Erro',
+        'Ocorreu um erro ao baixar a imagem. Por favor, tente novamente mais tarde.'
+      );
     }
   };
 
@@ -105,5 +142,6 @@ export const useTransactions = () => {
     number,
     onChangeNumber,
     isConnected,
+    downloadTransactionImage,
   };
 };
