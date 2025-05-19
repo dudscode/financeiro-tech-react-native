@@ -1,12 +1,11 @@
-import { IExtratoRepository } from "@/domain/repositories/IExtratoRepository";
-import { DocumentPickerAsset } from "expo-document-picker";
+import { IExtratoRepository } from '@/domain/repositories/IExtratoRepository';
+import { DocumentPickerAsset } from 'expo-document-picker';
 
 export class UploadFileUseCase {
   constructor(private readonly extratoRepository: IExtratoRepository) {}
 
   async execute(file: DocumentPickerAsset): Promise<string | null> {
-    console.log(file);
-        if (!file) {
+    if (!file) {
       console.warn('Arquivo inválido.');
       return null;
     }

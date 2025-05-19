@@ -31,7 +31,6 @@ export class ExtratoFirebaseRepository implements IExtratoRepository {
         ...transaction,
         userId: user.uid,
       };
-      console.log(transactionWithUser);
       const docRef = await addDoc(this.extratoCollection, transactionWithUser);
       console.log('Transação adicionada com ID:', docRef.id);
     } catch (error) {
@@ -138,7 +137,7 @@ export class ExtratoFirebaseRepository implements IExtratoRepository {
       const response = await fetch(file.uri);
       const blob = await response.blob();
 
-      const storagePath = `images/users/${user.uid}/${file.name}`;
+      const storagePath = `images/users/${user.uid}/${new Date().getTime()}.${file.mimeType?.replace('image/', '')}`;
       const storageRef = ref(storage, storagePath);
 
       await uploadBytes(storageRef, blob);
