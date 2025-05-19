@@ -50,7 +50,7 @@ export class ExtratoFirebaseRepository implements IExtratoRepository {
       const q = query(
         this.extratoCollection,
         where('userId', '==', user.uid),
-        orderBy('data', 'desc')
+        orderBy('fullDate', 'desc')
       );
 
       const querySnapshot = await getDocs(q);
