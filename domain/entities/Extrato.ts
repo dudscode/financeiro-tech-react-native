@@ -6,5 +6,6 @@ export type ExtratoItemProps = {
     tipo: TransactionType
     valor: number
     id: string,
+    fullDate?: Date
     imagePath?: string | null
 };

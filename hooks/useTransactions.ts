@@ -92,6 +92,7 @@ export const useTransactions = () => {
       await createTransactionUseCase.execute({
         mes: formatMonth(),
         data: new Date().toLocaleDateString(),
+        fullDate: new Date(),
         tipo: selectedTransaction,
         valor: transformValue(selectedTransaction, formatNumber),
         id,

@@ -5,7 +5,8 @@ export class UploadFileUseCase {
   constructor(private readonly extratoRepository: IExtratoRepository) {}
 
   async execute(file: DocumentPickerAsset): Promise<string | null> {
-    if (!file) {
+    console.log(file);
+        if (!file) {
       console.warn('Arquivo inválido.');
       return null;
     }
