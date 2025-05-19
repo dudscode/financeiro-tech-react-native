@@ -42,7 +42,9 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
   return (
     <CardContainer title="Nova Transação">
       {!isConnected && (
-        <Text style={[styles.text]}>Transação desabilitada, por favor, verifique sua conexão.</Text>
+        <Text style={[styles.darkText]}>
+          Transação desabilitada, por favor, verifique sua conexão.
+        </Text>
       )}
       {!!isConnected && (
         <>
