@@ -1,12 +1,10 @@
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 import MaskInput, { createNumberMask } from 'react-native-mask-input';
-import { TransactionType } from '../utils/config';
+import { TransactionType } from '../../domain/entities/Extrato';
 
 import { Button } from '@/components/Button';
 import { CardContainer } from '@/components/CardContainer';
-import extratoFirestore from '@/app/services/extrato-firestore';
-import { useExtrato } from '@/hooks/useExtrato';
 import { Picker } from '@react-native-picker/picker';
 import { FileUpload } from '@/components/FileUpload';
 import { styles } from './styles';
@@ -44,7 +42,9 @@ export const NewTransactions: FC<NewTransactionsProps> = () => {
   return (
     <CardContainer title="Nova Transação">
       {!isConnected && (
-        <Text style={[styles.text]}>Transação desabilitada, por favor, verifique sua conexão.</Text>
+        <Text style={[styles.darkText]}>
+          Transação desabilitada, por favor, verifique sua conexão.
+        </Text>
       )}
       {!!isConnected && (
         <>

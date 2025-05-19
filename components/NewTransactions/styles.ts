@@ -10,6 +10,11 @@ export const styles = StyleSheet.create({
     width: '100%',
   },
   text: { fontSize: 16, fontWeight: 'bold', color: '#dee9ea' },
+  darkText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#004d61',
+  },
   button: {
     backgroundColor: '#004d61',
     borderRadius: 8,

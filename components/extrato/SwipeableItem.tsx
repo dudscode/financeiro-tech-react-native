@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { formatCurrency, transformType, transformValueEdit } from '../utils/utils';
-import { ItemPropsExtrato, TransactionType } from '../utils/config';
+import { ExtratoItemProps, TransactionType } from '../../domain/entities/Extrato';
 import { ThemedText } from '../ThemedText';
 import { IconSymbol } from '../ui/IconSymbol';
 import { ThemedView } from '../ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { styles } from './styles';
-import extratoFirestore from '@/app/services/extrato-firestore';
+import { useTransactions } from '@/hooks/useTransactions';
 
 interface SwipeableItemProps {
   id: string;
@@ -24,7 +24,7 @@ interface SwipeableItemProps {
   data: string;
   imagePath?: string | null;
   onDelete: (id: string) => void;
-  onEdit: (newItem: ItemPropsExtrato) => void;
+  onEdit: (newItem: ExtratoItemProps) => void;
   resetSwipe: any;
   setResetSwipe: any;
 }
@@ -41,10 +41,12 @@ export default function SwipeableItem({
   setResetSwipe,
 }: SwipeableItemProps) {
   const iconColor = useThemeColor({ light: '#000000', dark: '#ffffff' }, 'icon');
+  const { downloadTransactionImage } = useTransactions();
   const [pan] = useState(new Animated.ValueXY());
   const [showOptions, setShowOptions] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [selectedType, setSelectedType] = useState<TransactionType>(tipo);
+
 
   useEffect(() => {
     if (resetSwipe) {
@@ -57,6 +59,16 @@ export default function SwipeableItem({
       });
     }
   }, [resetSwipe]);
+
+  const handleImageDownload = async (path: string) => {
+    if (path) {
+      try {
+        await downloadTransactionImage(path);
+      } catch (error) {
+        console.error('Erro ao baixar a imagem:', error);
+      }
+    }
+  };
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -79,6 +91,8 @@ export default function SwipeableItem({
         setShowOptions(false);
       }
     },
+
+
   });
 
   const renderDeleteButton = () => (
@@ -134,7 +148,7 @@ export default function SwipeableItem({
   );
 
   const handleEditType = (newTipo: TransactionType) => {
-    const newItem: ItemPropsExtrato = { id, mes, tipo: newTipo, valor, data };
+    const newItem: ExtratoItemProps = { id, mes, tipo: newTipo, valor, data };
     newItem.valor = transformValueEdit(newItem.tipo, newItem.valor);
     setSelectedType(newTipo);
     onEdit(newItem);
@@ -158,7 +172,7 @@ export default function SwipeableItem({
           <ThemedText type="subtitle">{formatCurrency(valor)}</ThemedText>
 
           {imagePath && (
-             <TouchableOpacity onPress={() => extratoFirestore.downloadImage(imagePath)}>
+             <TouchableOpacity onPress={() => handleImageDownload(imagePath)}>
              <IconSymbol name="arrow.down.doc" size={30} color={iconColor} />
            </TouchableOpacity>
           )}

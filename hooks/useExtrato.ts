@@ -1,17 +1,23 @@
 import { useContext, useState } from 'react';
-import { ExtratoContext } from '@/app/context/ExtratoContext';
+import { ExtratoContext, ExtratoContextType } from '@/context/ExtratoContext';
 import { router } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
-import { ItemPropsExtrato } from '@/components/utils/config';
+import { ExtratoItemProps } from '@/domain/entities/Extrato';
 import { Alert } from 'react-native';
-import { ExtratoContextType } from '@/app/context/ExtratoContext';
-import extratoFirestore from '@/app/services/extrato-firestore';
+import { ExtratoFirebaseRepository } from '@/infra/firebase/ExtratoFirebaseRepository';
+import { DeleteTransactionUseCase } from '@/domain/useCases/extrato/DeleteTransactionUseCase';
+import { UpdateTransactionUseCase } from '@/domain/useCases/extrato/UpdateTransactionUseCase';
+
 export const useExtrato = () => {
   const context = useContext<ExtratoContextType | undefined>(ExtratoContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [resetSwipe, setResetSwipe] = useState(false);
   const { signOutUser } = useAuth();
 
+  const ExtratoRepository = new ExtratoFirebaseRepository();
+  const updateTransactionUseCase = new UpdateTransactionUseCase(ExtratoRepository);
+  const deleteTransactionUseCase = new DeleteTransactionUseCase(ExtratoRepository);
+  
   if (!context) {
     throw new Error('useExtrato must be used within an ExtratoProvider');
   }
@@ -24,26 +30,11 @@ export const useExtrato = () => {
       item.data.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDelete = (id: string) => {
-    Alert.alert(
-      'Excluir Transação',
-      'Você tem certeza que deseja excluir a Transação ' + id + ' ?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          onPress: async () => {
-            await extratoFirestore.deleteTransaction(id);
-            fetchData();
-          },
-        },
-      ]
-    );
-  };
 
-  const handleEdit = async (newItem: ItemPropsExtrato) => {
+
+  const handleEdit = async (newItem: ExtratoItemProps) => {
     try {
-      await extratoFirestore.updateTransaction(newItem.id, newItem);
+      await updateTransactionUseCase.execute(newItem.id, newItem);
       fetchData();
       confirmEdit(newItem.id);
       setResetSwipe(true);
@@ -52,6 +43,24 @@ export const useExtrato = () => {
     }
   };
 
+  const handleDelete = (id: string) => {
+    Alert.alert(
+      'Excluir Transação',
+      'Você tem certeza que deseja excluir a Transação ' + id + ' ?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Excluir',
+          onPress: () => {
+            (async () => {
+              await deleteTransactionUseCase.execute(id);
+              fetchData();
+            })();
+          },
+        },
+      ]
+    );
+  };
   const confirmEdit = (id: string) => {
     Alert.alert('Transação Editada!', 'Você editou a Transação ' + id + ' com sucesso!', [
       { text: 'Ok', style: 'default' },

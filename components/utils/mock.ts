@@ -1,6 +1,6 @@
-import { ItemPropsExtrato } from "./config";
+import { ExtratoItemProps } from "../../domain/entities/Extrato";
 
-export const DATA_EXTRATO: ItemPropsExtrato[] = [
+export const DATA_EXTRATO: ExtratoItemProps[] = [
     {
         id: "7e09",
         mes: "Dezembro",
